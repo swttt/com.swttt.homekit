@@ -1,62 +1,105 @@
 "use strict";
 
+const Homey = require('homey')
 const HAS = require('has-node')
+const {
+  HomeyAPI
+} = require('./athom-api.js')
+// const Homekit = require('./lib/homekit.js')
+var server = {};
+var uniqueid = 2;
 
-function init() {
+class HomekitApp extends Homey.App {
 
-  Homey.log("Starting homekit!");
+  getApi() {
+    if (!this.api) {
+      this.api = HomeyAPI.forCurrentHomey(Homey.env.BEARER_TOKEN);
+    }
+    return this.api;
+  }
+
+  async getAllDevices() {
+    const api = await this.getApi();
+    return api.devices.getDevices();
+  }
+
+  async getSystemInfo() {
+    const api = await this.getApi();
+    return api.system.getInfo();
+  }
+
+  async setDeviceState(deviceid, state) {
+    const api = await this.getApi();
+    return api.devices.setDeviceCapabilityState({id:deviceid, capability: "onoff", value: state})
+  }
 
 
 
-  let config = new HAS.Config('Homey', '81:E6:B6:43:BC:2C', HAS.categories.bridge, __dirname + '/userdata/homey.json', 8090, '123-00-123');
+  configServer(homey) {
+    console.log(homey.hostname + ' used for config.')
+    this.config = new HAS.Config(homey.hostname, '71:E7:D6:42:BD:3C', HAS.categories.bridge, '../userdata/homey.json', 8090, '123-00-321');
+    server = new HAS.Server(this.config);
+    var bridge = new HAS.Accessory(1);
+    var identify = HAS.predefined.Identify(1, undefined, function(value, callback) {
+        console.log('Bridge Identify', value);
+        callback(HAS.statusCodes.OK);
+      }),
+      manufacturer = HAS.predefined.Manufacturer(2, 'Athom'),
+      model = HAS.predefined.Model(3, 'V1'),
+      name = HAS.predefined.Name(4, homey.hostname),
+      serialNumber = HAS.predefined.SerialNumber(5, homey.boot_id),
+      firmwareVersion = HAS.predefined.FirmwareRevision(6, homey.homey_version);
+    bridge.addServices(HAS.predefined.AccessoryInformation(1, [identify, manufacturer, model, name, serialNumber, firmwareVersion]));
+    server.addAccessory(bridge);
+    server.onIdentify = identify.onWrite;
+  }
 
-  let server = new HAS.Server(config);
 
-  //light
-  let bridge = new HAS.Accessory(1);
-
-  let identify = HAS.predefined.Identify(1, undefined, (value, callback) => {
-      console.log('Bridge Identify', value);
+  addDevice(device) {
+    var id = uniqueid;
+    console.log('Going to add ' + id);
+    var fan = new HAS.Accessory(id);
+    var fanIdentify = HAS.predefined.Identify(1, undefined, function(value, callback) {
+        console.log(device.name + ' Identify', value);
+        callback(HAS.statusCodes.OK);
+      }),
+      fanManufacturer = HAS.predefined.Manufacturer(2, device.driver.owner_name),
+      fanModel = HAS.predefined.Model(3, device.driver.id),
+      fanName = HAS.predefined.Name(4, device.name),
+      fanSerialNumber = HAS.predefined.SerialNumber(5, device.id),
+      fanFirmwareVersion = HAS.predefined.FirmwareRevision(6, '1.0.0');
+    fan.addServices(HAS.predefined.AccessoryInformation(1, [fanIdentify, fanManufacturer, fanModel, fanName, fanSerialNumber, fanFirmwareVersion]));
+    var on = HAS.predefined.On(1, false, (value, callback) => {
+      console.log(device.name + ' Status', value);
+      this.setDeviceState(device.id, value).then(this.log);
       callback(HAS.statusCodes.OK);
-    }),
-    manufacturer = HAS.predefined.Manufacturer(2, 'Hamyar'),
-    model = HAS.predefined.Model(3, 'Model2017'),
-    name = HAS.predefined.Name(4, 'Bridge'),
-    serialNumber = HAS.predefined.SerialNumber(5, 'ABCDEFGH'),
-    firmwareVersion = HAS.predefined.FirmwareRevision(6, '1.0.0');
-  bridge.addServices(HAS.predefined.AccessoryInformation(1, [identify, manufacturer, model, name, serialNumber, firmwareVersion]));
+    });
+    fan.addServices(HAS.predefined.Lightbulb(id, [on]));
+    server.addAccessory(fan);
+    console.log('Device ' + device.name + ' finished!')
+    uniqueid = uniqueid + 1;
+  }
 
-  server.addAccessory(bridge);
+  onInit() {
 
+    this.getSystemInfo()
+      .then(async(res) => {
+        await this.configServer(res);
+        const devices = await this.getAllDevices()
+          for (var key in devices) {
+            if (devices.hasOwnProperty(key)) {
+              if(devices[key].capabilities.onoff){
+              await this.addDevice(devices[key]);
+              await console.log(devices[key].name);
+            }
+            }
+          }
+        server.startServer();
+      })
+      .catch(this.error)
 
-  //light
-  let light = new HAS.Accessory(2);
-
-  let lightIdentify = HAS.predefined.Identify(1, undefined, (value, callback) => {
-      console.log('Light Identify', value);
-      callback(HAS.statusCodes.OK);
-    }),
-    lightManufacturer = HAS.predefined.Manufacturer(2, 'Fibaro'),
-    lightModel = HAS.predefined.Model(3, 'Dimmer2'),
-    lightName = HAS.predefined.Name(4, 'Dimmer'),
-    lightSerialNumber = HAS.predefined.SerialNumber(5, 'ABCDEFGHIJ'),
-    lightFirmwareVersion = HAS.predefined.FirmwareRevision(6, '1.0.0');
-  light.addServices(HAS.predefined.AccessoryInformation(1, [lightIdentify, lightManufacturer, lightModel, lightName, lightSerialNumber, lightFirmwareVersion]));
-
-
-  let on = HAS.predefined.On(1, false, (value, callback) => {
-    console.log('Light Status', value);
-    callback(HAS.statusCodes.OK);
-  });
-  light.addServices(HAS.predefined.Lightbulb(2, [on]));
-  //server.onIdentify will be used only when server is not paired, If server is paired identify.onWrite will be used
-  server.onIdentify = identify.onWrite;
-
-  server.addAccessory(light);
-
-  //Starts the server
-  server.startServer();
+  }
 
 }
 
-module.exports.init = init;
+module.exports = HomekitApp

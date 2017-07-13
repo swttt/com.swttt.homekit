@@ -1,12 +1,13 @@
 {
-    "id": "com.swttt.homekit",
-    "name": {
-        "en": "HomeKit"
-    },
-    "version": "0.0.1",
-    "compatibility": "1.x",
-    "author": {
-        "name": "Bas Jansen",
-        "email": "bas@balotti.com"
-    }
+  "id": "com.swttt.homekit",
+  "sdk": 2,
+  "name": {
+    "en": "HomeKit"
+  },
+  "version": "0.0.1",
+  "compatibility": "1.x",
+  "author": {
+    "name": "Bas Jansen",
+    "email": "bas@balotti.com"
+  }
 }
