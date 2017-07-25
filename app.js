@@ -7,6 +7,7 @@ const {
 } = require('./athom-api.js')
 // const Homekit = require('./lib/homekit.js')
 var server = {};
+var allDevices = {};
 var uniqueid = 2;
 
 class HomekitApp extends Homey.App {
@@ -20,17 +21,13 @@ class HomekitApp extends Homey.App {
 
   async getAllDevices() {
     const api = await this.getApi();
-    return api.devices.getDevices();
+    allDevices = await api.devices.getDevices();
+    return;
   }
 
   async getSystemInfo() {
     const api = await this.getApi();
     return api.system.getInfo();
-  }
-
-  async setDeviceState(deviceid, state) {
-    const api = await this.getApi();
-    return api.devices.setDeviceCapabilityState({id:deviceid, capability: "onoff", value: state})
   }
 
 
@@ -71,7 +68,9 @@ class HomekitApp extends Homey.App {
     fan.addServices(HAS.predefined.AccessoryInformation(1, [fanIdentify, fanManufacturer, fanModel, fanName, fanSerialNumber, fanFirmwareVersion]));
     var on = HAS.predefined.On(1, false, (value, callback) => {
       console.log(device.name + ' Status', value);
-      this.setDeviceState(device.id, value).then(this.log);
+
+      allDevices[device.id].setCapabilityValue("onoff", value)
+
       callback(HAS.statusCodes.OK);
     });
     fan.addServices(HAS.predefined.Lightbulb(id, [on]));
@@ -85,12 +84,12 @@ class HomekitApp extends Homey.App {
     this.getSystemInfo()
       .then(async(res) => {
         await this.configServer(res);
-        const devices = await this.getAllDevices()
-          for (var key in devices) {
-            if (devices.hasOwnProperty(key)) {
-              if(devices[key].capabilities.onoff){
-              await this.addDevice(devices[key]);
-              await console.log(devices[key].name);
+        await this.getAllDevices();
+          for (var key in allDevices) {
+            if (allDevices.hasOwnProperty(key)) {
+              if(allDevices[key].capabilities.onoff){
+              await this.addDevice(allDevices[key]);
+              await console.log(allDevices[key].name);
             }
             }
           }
