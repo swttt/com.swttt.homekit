@@ -7,5 +7,6 @@ Before you run the app on Homey, make sure you created the file `env.json` in th
   "BEARER_TOKEN": "Your bearer token here"
 }
 ```
+### Important
 
-When you pair Homey within the Home app, make sure you use the code `200-20-200`.
+When you pair Homey within the Home app it should ask for a code. This is `200-20-200`.
