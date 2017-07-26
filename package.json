@@ -9,6 +9,6 @@
   "author": "Bas Jansen",
   "license": "ISC",
   "dependencies": {
-    "has-node": "0.0.2"
+    "has-node": "github:abedinpour/HAS"
   }
 }
