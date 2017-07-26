@@ -51,7 +51,7 @@ class HomekitApp extends Homey.App {
         }
       }
     }
-    console.log('\x1b[42m%s\x1b[0m','Added all devices..done here!');
+    console.log('\x1b[42m%s\x1b[0m', 'Added all devices..done here!');
 
     // Start the server
     server.startServer();
@@ -61,13 +61,13 @@ class HomekitApp extends Homey.App {
   onInit() {
     // Start the server
     this.startServer()
-      .then(console.log('\x1b[42m%s\x1b[0m','Homekit server starting!'))
+      .then(console.log('\x1b[42m%s\x1b[0m', 'Homekit server starting!'))
       .catch(this.error);
 
-      allDevices['eca9f089-f65a-4d43-9a8c-a30787ea01d4'].on('$state', (state) => {
-        console.log('static one!')
-        console.log(state);
-      });
+    allDevices['eca9f089-f65a-4d43-9a8c-a30787ea01d4'].on('$state', (state) => {
+      console.log('static one!')
+      console.log(state);
+    });
 
   }
 
