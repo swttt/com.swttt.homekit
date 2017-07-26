@@ -58,9 +58,9 @@ class HomekitApp extends Homey.App {
 
   }
 
-  async onInit() {
+  onInit() {
     // Start the server
-    await this.startServer()
+    this.startServer()
       .then(console.log('\x1b[42m%s\x1b[0m','Homekit server starting!'))
       .catch(this.error);
 
