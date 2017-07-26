@@ -10,8 +10,6 @@ const Homekit = require('./lib/homekit.js')
 var server = {};
 var allDevices = {};
 
-// var uniqueid = 2;
-
 class HomekitApp extends Homey.App {
 
   // Get homey object
@@ -49,6 +47,12 @@ class HomekitApp extends Homey.App {
             console.log(state);
           });
         }
+        // If device has the class socket
+        else if (allDevices[key].class == 'socket') {
+          // Add light object to server
+          let socket = await Homekit.createSocket(allDevices[key]);
+          await server.addAccessory(socket);
+        }
       }
     }
     console.log('\x1b[42m%s\x1b[0m', 'Added all devices..done here!');
@@ -58,9 +62,9 @@ class HomekitApp extends Homey.App {
 
   }
 
-  onInit() {
+  async onInit() {
     // Start the server
-    this.startServer()
+    await this.startServer()
       .then(console.log('\x1b[42m%s\x1b[0m', 'Homekit server starting!'))
       .catch(this.error);
 
