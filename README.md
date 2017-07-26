@@ -1,5 +1,4 @@
 ## Homekit for Homey
-___
 
 Before you run the app on Homey, make sure you created the file `env.json` in the root folder. This file should contain your bearer token like this:
 
