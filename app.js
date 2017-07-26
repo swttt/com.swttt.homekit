@@ -35,26 +35,26 @@ class HomekitApp extends Homey.App {
     server = await Homekit.configServer(systeminfo);
 
     // Loop all devices
-    for (var key in allDevices) {
-      if (allDevices.hasOwnProperty(key)) {
-        // If device has the class light
-        if (allDevices[key].class == 'light') {
-          // Add light object to server
-          let light = await Homekit.createLight(allDevices[key]);
-          await server.addAccessory(light);
-          // Check for realtime events
-          allDevices[key].on('$state', state => {
-            console.log(state);
-          });
-        }
-        // If device has the class socket
-        else if (allDevices[key].class == 'socket') {
-          // Add light object to server
-          let socket = await Homekit.createSocket(allDevices[key]);
-          await server.addAccessory(socket);
-        }
-      }
-    }
+    // for (var key in allDevices) {
+    //   if (allDevices.hasOwnProperty(key)) {
+    //     // If device has the class light
+    //     if (allDevices[key].class == 'light') {
+    //       // Add light object to server
+    //       let light = await Homekit.createLight(allDevices[key]);
+    //       await server.addAccessory(light);
+    //       // Check for realtime events
+    //       allDevices[key].on('$state', state => {
+    //         console.log(state);
+    //       });
+    //     }
+    //     // If device has the class socket
+    //     else if (allDevices[key].class == 'socket') {
+    //       // Add light object to server
+    //       let socket = await Homekit.createSocket(allDevices[key]);
+    //       await server.addAccessory(socket);
+    //     }
+    //   }
+    // }
     console.log('\x1b[42m%s\x1b[0m', 'Added all devices..done here!');
 
     // Start the server
