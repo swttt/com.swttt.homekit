@@ -1,5 +1,5 @@
 "use strict";
-
+global.DEBUG = true;
 const Homey = require('homey')
 const {
   HomeyAPI
@@ -27,9 +27,9 @@ class HomekitApp extends Homey.App {
     // Get system info
     const systeminfo = await api.system.getInfo();
     // Subscribe to realtime events and set all devices global
-
-    allDevices = await api.devices.getDevices();
     await api.devices.subscribe();
+    allDevices = await api.devices.getDevices();
+
 
     // Get server object
     server = await Homekit.configServer(systeminfo);
@@ -67,11 +67,6 @@ class HomekitApp extends Homey.App {
     await this.startServer()
       .then(console.log('\x1b[42m%s\x1b[0m', 'Homekit server starting!'))
       .catch(this.error);
-
-    allDevices['eca9f089-f65a-4d43-9a8c-a30787ea01d4'].on('$state', (state) => {
-      console.log('static one!')
-      console.log(state);
-    });
 
   }
 
