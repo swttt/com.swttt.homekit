@@ -18,6 +18,11 @@ class HomekitApp extends Homey.App {
     }
     return this.api;
   }
+  async getDevices(){
+    const api = await this.getApi();
+    const devices = await api.devices.getDevices();
+    return devices;
+  }
 
   // Start server function
   async startServer() {

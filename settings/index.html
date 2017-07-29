@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Welcome to Vue</title>
+    <script src="https://unpkg.com/vue"></script>
+    <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.0.4/fuse.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.4/css/bulma.min.css" integrity="sha256-cqlVHMFcSR4diUVzW7ot+yIE0EHW0jfNvRG9GVEt8pE=" crossorigin="anonymous"/>
+
+    <style>
+      .icon {
+        -webkit-mask-size: contain;
+        -webkit-mask-position: center center;
+        -webkit-mask-repeat: no-repeat;
+      }
+
+    </style>
+
+  </head>
+  <body>
+    <div id="app">
+      <div class="tabs is-centered">
+        <ul>
+          <li @click="setPage('server');" :class="{'is-active': activePage('server')}">
+            <a>Server</a>
+          </li>
+          <li @click="setPage('devices');" :class="{'is-active': activePage('devices')}">
+            <a>Devices</a>
+          </li>
+          <li @click="setPage('settings');" :class="{'is-active': activePage('settings')}">
+            <a>Settings</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="columns">
+
+        <div class="column is-6 is-offset-3 box" v-if="this.currentPage == 'devices'">
+          <input v-model="search" class="input" type="text" placeholder="Filter...">
+          <table class="table is-striped" style="padding-bottom:50px;">
+            <tbody>
+              <tr v-for="device in filteredItems">
+                <td width="50">
+                  <center><img :src="device.icon" style="height:30px;width:auto;"/></center>
+                </td>
+                <td>
+                  <b>{{device.name}}</b><br/>
+                  <small>{{device.zone.name}}</small>
+                </td>
+                <td style="text-align:right;">
+                  <a class="button is-success">Add</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      function onHomeyReady(Homey) {
+        Homey.ready();
+        new Vue({
+          el: '#app',
+          data: {
+            devices: {},
+            search: '',
+            currentPage: 'server'
+          },
+          methods: {
+            getDevices() {
+              Homey.api('GET', '/devices', null, (err, result) => {
+                if (err)
+                  return Homey.alert(err);
+                var array = Object.keys(result).map(function (key) {
+                  return result[key];
+                });
+                this.devices = array
+              });
+            },
+            activePage(page){
+              if(page == this.currentPage){
+                return true;
+              }
+              else{return false;}
+            },
+            setPage(page){
+              this.currentPage = page;
+            }
+          },
+          mounted() {
+            this.getDevices();
+          },
+          computed: {
+            filteredItems() {
+              var options = {
+                keys: [
+                  "name", "zone.name", "class"
+                ],
+                shouldSort: true,
+                findAllMatches: true,
+                threshold: 0.6,
+                location: 0,
+                distance: 100,
+                maxPatternLength: 32,
+                minMatchCharLength: 2
+              };
+              var fuse = new Fuse(this.devices, options);
+              console.log(fuse.search(this.search));
+              if(this.search.length > 2){
+                return fuse.search(this.search);
+              } else{
+                return this.devices
+              }
+
+            }
+          }
+        })
+      }
+    </script>
+  </body>
+</html>
