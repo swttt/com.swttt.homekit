@@ -37,7 +37,7 @@
                   <small>{{device.zone.name}}</small>
                 </td>
                 <td style="text-align:right;">
-                  <a v-if="!isAdded(device)" @click="addDevice(device)" class="button is-success">Add</a>
+                  <a v-if="!isAdded(device) && device.capabilities.onoff && device.class == 'light' || device.class == 'socket' " @click="addDevice(device)" class="button is-success">Add</a>
                   <a v-if="isAdded(device)" @click="removeDevice(device)" class="button is-danger">Delete</a>
                 </td>
               </tr>
@@ -102,11 +102,7 @@
                   return Homey.alert(err);
                 }
               )
-              const body = {
-                device: device,
-                id: this.devicesPaired.length + 1
-              }
-              await Homey.api('PUT', '/devices/add', body, (err, result) => {
+              await Homey.api('PUT', '/devices/add', device, (err, result) => {
                 if (err)
                   return Homey.alert(err);
                 }
@@ -114,16 +110,10 @@
               console.log('Device added');
             },
             async removeDevice(device) {
-              await console.log(device.id, device.name, device.class);
               var i;
-              let body = {
-                device: device,
-                id: null
-              }
               for (i = 0; i < this.devicesPaired.length; i++) {
                 if (this.devicesPaired[i] && this.devicesPaired[i].id == device.id) {
-                  body.id = i + 1
-                  delete this.devicesPaired[i];
+                  this.devicesPaired.splice(i,1);
                 }
               }
               await Homey.set('pairedDevices', this.devicesPaired, (err, result) => {
@@ -131,7 +121,7 @@
                   return Homey.alert(err);
                 console.log('Device removed');
               })
-              Homey.api('GET', '/devices/delete', body, (err, result) => {
+              Homey.api('DELETE', '/devices/delete', device, (err, result) => {
                 if (err)
                   return Homey.alert(err);
                 }

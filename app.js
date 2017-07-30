@@ -55,13 +55,13 @@ class HomekitApp extends Homey.App {
       // If device has the class light
       if (allPairedDevices[i] && allPairedDevices[i].class == 'light') {
         // Add light object to server
-        let light = await Homekit.createLight(allDevices[allPairedDevices[i].id]);
+        let light = await Homekit.createLight(allDevices[allPairedDevices[i].id], server.config.getHASID(allPairedDevices[i].id));
         await server.addAccessory(light);
       }
       // If device has the class socket
       else if (allPairedDevices[i] && allPairedDevices[i].class == 'socket') {
         // Add light object to server
-        let socket = await Homekit.createSocket(allDevices[allPairedDevices[i].id]);
+        let socket = await Homekit.createSocket(allDevices[allPairedDevices[i].id], server.config.getHASID(allPairedDevices[i].id));
         await server.addAccessory(socket);
       }
     }
@@ -69,7 +69,6 @@ class HomekitApp extends Homey.App {
 
     // Start the server
     server.startServer();
-
 
     // console.log(server);
     // Homey.ManagerSettings.set('serverObject', server.accessories);
@@ -86,24 +85,24 @@ class HomekitApp extends Homey.App {
 
   }
 
-  async addDevice(result) {
-    await console.log(allDevices[result.device.id].name);
+  async addDevice(device) {
     // If device has the class light
-    if (allDevices[result.device.id].class == 'light') {
+    if (allDevices[device.id].class == 'light') {
       // Add light object to server
-      let light = await Homekit.createLight(allDevices[result.device.id]);
+      let light = await Homekit.createLight(allDevices[device.id], server.config.getHASID(device.id));
       await server.addAccessory(light);
     }
     // If device has the class socket
-    else if (allDevices[result.device.id].class == 'socket') {
+    else if (allDevices[device.id].class == 'socket') {
       // Add light object to server
-      let socket = await Homekit.createSocket(allDevices[result.device.id]);
+      let socket = await Homekit.createSocket(allDevices[device.id], server.config.getHASID(device.id));
       await server.addAccessory(socket);
     }
   }
 
-  async deleteDevice(result){
-    server.removeAccessory(result.id);
+  async deleteDevice(device){
+    console.log(device.id);
+    server.removeAccessory(server.config.getHASID(device.id));
   }
 
   getServerStatus() {

@@ -34,7 +34,7 @@ module.exports = [
     }
   },
   {
-    method: 'GET',
+    method: 'DELETE',
     path: '/devices/delete',
     fn: function(args, callback) {
       Homey.app.deleteDevice(args.body).then(res => {
