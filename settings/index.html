@@ -28,7 +28,7 @@
           <input v-model="search" class="input" type="text" placeholder="Filter...">
           <table class="table is-striped" style="padding-bottom:50px;">
             <tbody>
-              <tr v-for="device in filteredItems">
+              <tr v-for="device in filteredItems" v-if="device.capabilities.onoff && device.class == 'light' || device.class == 'socket'">
                 <td width="50">
                   <center><img :src="device.icon" style="height:30px;width:auto;"/></center>
                 </td>
@@ -37,7 +37,7 @@
                   <small>{{device.zone.name}}</small>
                 </td>
                 <td style="text-align:right;">
-                  <a v-if="!isAdded(device) && device.capabilities.onoff && device.class == 'light' || device.class == 'socket' " @click="addDevice(device)" class="button is-success">Add</a>
+                  <a v-if="!isAdded(device)" @click="addDevice(device)" class="button is-success">Add</a>
                   <a v-if="isAdded(device)" @click="removeDevice(device)" class="button is-danger">Delete</a>
                 </td>
               </tr>
