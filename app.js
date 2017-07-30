@@ -5,12 +5,11 @@ const {
 } = require('./lib/athom-api.js')
 const Homekit = require('./lib/homekit.js')
 
-// Make server and allDevices global
-var server = {};
-var allDevices = {};
+let allDevices = {},
+    server = {};
+
 
 class HomekitApp extends Homey.App {
-
   // Get homey object
   getApi() {
     if (!this.api) {
@@ -18,14 +17,16 @@ class HomekitApp extends Homey.App {
     }
     return this.api;
   }
-  async getDevices(){
+  async getDevices() {
     const api = await this.getApi();
-    const devices = await api.devices.getDevices();
-    return devices;
+
+    return api.devices.getDevices();
   }
 
   // Start server function
-  async startServer() {
+  async startingServer() {
+
+
     // Get the homey object
     const api = await this.getApi();
     // Get system info
@@ -34,25 +35,34 @@ class HomekitApp extends Homey.App {
     await api.devices.subscribe();
     allDevices = await api.devices.getDevices();
 
-
-    // Get server object
     server = await Homekit.configServer(systeminfo);
+    // if(Homey.ManagerSettings.get('serverObject')){
+    //   server.accessories = await Homey.ManagerSettings.get('serverObject');
+    // }
+
 
     // Loop all devices
-    for (var key in allDevices) {
-      if (allDevices.hasOwnProperty(key)) {
-        // If device has the class light
-        if (allDevices[key].class == 'light') {
-          // Add light object to server
-          let light = await Homekit.createLight(allDevices[key]);
-          await server.addAccessory(light);
-        }
-        // If device has the class socket
-        else if (allDevices[key].class == 'socket') {
-          // Add light object to server
-          let socket = await Homekit.createSocket(allDevices[key]);
-          await server.addAccessory(socket);
-        }
+    const allPairedDevices = await Homey.ManagerSettings.get('pairedDevices') || [];
+    var arrayLength = await allPairedDevices.length;
+
+    // Get server object
+    // if (!server) {
+    //   await console.log('Empty server object found! Setting config now...')
+    //   server = await Homekit.configServer(systeminfo);
+    // }
+
+    for (var i = 0; i < arrayLength; i++) {
+      // If device has the class light
+      if (allPairedDevices[i] && allPairedDevices[i].class == 'light') {
+        // Add light object to server
+        let light = await Homekit.createLight(allDevices[allPairedDevices[i].id]);
+        await server.addAccessory(light);
+      }
+      // If device has the class socket
+      else if (allPairedDevices[i] && allPairedDevices[i].class == 'socket') {
+        // Add light object to server
+        let socket = await Homekit.createSocket(allDevices[allPairedDevices[i].id]);
+        await server.addAccessory(socket);
       }
     }
     console.log('\x1b[42m%s\x1b[0m', 'Added all devices..done here!');
@@ -60,15 +70,46 @@ class HomekitApp extends Homey.App {
     // Start the server
     server.startServer();
 
+
+    // console.log(server);
+    // Homey.ManagerSettings.set('serverObject', server.accessories);
+    // Server status to true
+
+
   }
 
   async onInit() {
     // Start the server
-    await this.startServer()
+    await this.startingServer()
       .then(console.log('\x1b[42m%s\x1b[0m', 'Homekit server starting!'))
       .catch(this.error);
 
   }
+
+  async addDevice(result) {
+    await console.log(allDevices[result.device.id].name);
+    // If device has the class light
+    if (allDevices[result.device.id].class == 'light') {
+      // Add light object to server
+      let light = await Homekit.createLight(allDevices[result.device.id]);
+      await server.addAccessory(light);
+    }
+    // If device has the class socket
+    else if (allDevices[result.device.id].class == 'socket') {
+      // Add light object to server
+      let socket = await Homekit.createSocket(allDevices[result.device.id]);
+      await server.addAccessory(socket);
+    }
+  }
+
+  async deleteDevice(result){
+    server.removeAccessory(result.id);
+  }
+
+  getServerStatus() {
+    return server.isRunning;
+  }
+
 
 }
 

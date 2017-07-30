@@ -13,5 +13,35 @@ module.exports = [
         .catch(error => callback(error, null));
 
     }
+  },
+  {
+    method: 'GET',
+    path: '/server/status',
+    fn: function(args, callback) {
+      callback(null, Homey.app.getServerStatus());
+
+    }
+  },
+  {
+    method: 'PUT',
+    path: '/devices/add',
+    fn: function(args, callback) {
+      Homey.app.addDevice(args.body).then(res => {
+          callback(null, true);
+        })
+        .catch(error => callback(error, null));
+
+    }
+  },
+  {
+    method: 'GET',
+    path: '/devices/delete',
+    fn: function(args, callback) {
+      Homey.app.deleteDevice(args.body).then(res => {
+          callback(null, true);
+        })
+        .catch(error => callback(error, null));
+
+    }
   }
 ]
