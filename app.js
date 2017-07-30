@@ -93,10 +93,20 @@ class HomekitApp extends Homey.App {
       await server.addAccessory(light);
     }
     // If device has the class socket
-    else if (allDevices[device.id].class == 'socket') {
+    if (allDevices[device.id].class == 'socket') {
       // Add light object to server
       let socket = await Homekit.createSocket(allDevices[device.id], server.config.getHASID(device.id));
       await server.addAccessory(socket);
+    }
+    if (allDevices[device.id].class == 'sensor') {
+      // Add light object to server
+      let sensor = await Homekit.createSensor(allDevices[device.id], server.config.getHASID(device.id));
+      await server.addAccessory(sensor);
+    }
+    if (allDevices[device.id].class == 'lock') {
+      // Add light object to server
+      let lock = await Homekit.createLock(allDevices[device.id], server.config.getHASID(device.id));
+      await server.addAccessory(lock);
     }
   }
 

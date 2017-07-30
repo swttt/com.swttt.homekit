@@ -28,7 +28,7 @@
           <input v-model="search" class="input" type="text" placeholder="Filter...">
           <table class="table is-striped" style="padding-bottom:50px;">
             <tbody>
-              <tr v-for="device in filteredItems" v-if="device.capabilities.onoff && device.class == 'light' || device.class == 'socket'">
+              <tr v-for="device in filteredItems" v-if="device.capabilities.onoff || device.capabilities.alarm_motion">
                 <td width="50">
                   <center><img :src="device.icon" style="height:30px;width:auto;"/></center>
                 </td>
@@ -67,9 +67,9 @@
                 if (err)
                   return Homey.alert(err);
                 var array = Object.keys(result).map(function (key) {
-                  return result[key];
+                    return result[key];
                 });
-                this.devices = array
+                this.devices = array.filter(this.filterArray);
               });
             },
             getPairedDevices() {
@@ -146,6 +146,10 @@
               }
 
               return false;
+            },
+            filterArray(device){
+              if(device.class == "light" || device.class == "socket" || device.class == "sensor")
+                return device
             }
           },
           mounted() {
@@ -168,7 +172,6 @@
                 minMatchCharLength: 2
               };
               var fuse = new Fuse(this.devices, options);
-              console.log(fuse.search(this.search));
               if (this.search.length > 2) {
                 return fuse.search(this.search);
               } else {
