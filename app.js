@@ -19,8 +19,8 @@ class HomekitApp extends Homey.App {
   }
   async getDevices() {
     const api = await this.getApi();
-
-    return api.devices.getDevices();
+    allDevices = await api.devices.getDevices();
+    return allDevices;
   }
 
   // Start server function
@@ -53,17 +53,7 @@ class HomekitApp extends Homey.App {
 
     for (var i = 0; i < arrayLength; i++) {
       // If device has the class light
-      if (allPairedDevices[i] && allPairedDevices[i].class == 'light') {
-        // Add light object to server
-        let light = await Homekit.createLight(allDevices[allPairedDevices[i].id], server.config.getHASID(allPairedDevices[i].id));
-        await server.addAccessory(light);
-      }
-      // If device has the class socket
-      else if (allPairedDevices[i] && allPairedDevices[i].class == 'socket') {
-        // Add light object to server
-        let socket = await Homekit.createSocket(allDevices[allPairedDevices[i].id], server.config.getHASID(allPairedDevices[i].id));
-        await server.addAccessory(socket);
-      }
+      await this.addDevice(allPairedDevices[i]);
     }
     console.log('\x1b[42m%s\x1b[0m', 'Added all devices..done here!');
 
@@ -86,33 +76,39 @@ class HomekitApp extends Homey.App {
   }
 
   async addDevice(device) {
+    await this.getDevices();
     // If device has the class light
     if (allDevices[device.id].class == 'light') {
       // Add light object to server
       let light = await Homekit.createLight(allDevices[device.id], server.config.getHASID(device.id));
       await server.addAccessory(light);
+      console.log(device.name + ' is added!');
     }
     // If device has the class socket
     if (allDevices[device.id].class == 'socket') {
-      // Add light object to server
+      // Add socket object to server
       let socket = await Homekit.createSocket(allDevices[device.id], server.config.getHASID(device.id));
       await server.addAccessory(socket);
+      console.log(device.name + ' is added!');
     }
     if (allDevices[device.id].class == 'sensor') {
-      // Add light object to server
+      // Add sensor object to server
       let sensor = await Homekit.createSensor(allDevices[device.id], server.config.getHASID(device.id));
       await server.addAccessory(sensor);
+      console.log(device.name + ' is added!');
     }
     if (allDevices[device.id].class == 'lock') {
-      // Add light object to server
+      // Add lock object to server
       let lock = await Homekit.createLock(allDevices[device.id], server.config.getHASID(device.id));
       await server.addAccessory(lock);
+      console.log(device.name + ' is added!');
     }
   }
 
   async deleteDevice(device){
     console.log(device.id);
     server.removeAccessory(server.config.getHASID(device.id));
+    console.log(device.name + ' is removed!');
   }
 
   getServerStatus() {

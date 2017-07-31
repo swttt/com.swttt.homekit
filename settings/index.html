@@ -28,7 +28,7 @@
           <input v-model="search" class="input" type="text" placeholder="Filter...">
           <table class="table is-striped" style="padding-bottom:50px;">
             <tbody>
-              <tr v-for="device in filteredItems" v-if="device.capabilities.onoff || device.capabilities.alarm_motion">
+              <tr v-for="device in filteredItems" v-if="device.capabilities.onoff || device.capabilities.alarm_motion || device.capabilities.locked">
                 <td width="50">
                   <center><img :src="device.icon" style="height:30px;width:auto;"/></center>
                 </td>
@@ -148,7 +148,7 @@
               return false;
             },
             filterArray(device){
-              if(device.class == "light" || device.class == "socket" || device.class == "sensor")
+              if(device.class == "light" || device.class == "socket" || device.class == "sensor" || device.class == "lock")
                 return device
             }
           },
