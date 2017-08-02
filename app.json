@@ -1,13 +1,26 @@
 {
   "id": "com.swttt.homekit",
   "sdk": 2,
+  "permissions": [
+    "homey:manager:api"
+  ],
   "name": {
-    "en": "HomeKit"
+    "en": "HomeyKit",
+    "nl": "HomeyKit"
   },
-  "version": "0.0.1",
-  "compatibility": "1.x",
+  "description": {
+    "en": "Homekit support for Homey",
+    "nl": "Homekit ondersteuning voor Homey"
+  },
+  "category": "appliances",
+  "version": "1.0.0",
+  "compatibility": ">=1.5.0",
   "author": {
     "name": "Bas Jansen",
-    "email": "bas@balotti.com"
+    "email": "b@sjansen.email"
+  },
+  "images": {
+    "large": "./assets/images/large.png",
+    "small": "./assets/images/small.png"
   }
 }

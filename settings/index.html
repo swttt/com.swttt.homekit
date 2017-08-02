@@ -10,21 +10,11 @@
   </head>
   <body>
     <div id="app">
-      <div class="tabs is-centered">
-        <ul>
-          <li @click="setPage('devices');" :class="{'is-active': activePage('devices')}">
-            <a>Devices</a>
-          </li>
-          <li @click="setPage('settings');" :class="{'is-active': activePage('settings')}">
-            <a>Settings</a>
-          </li>
-        </ul>
-      </div>
+
 
       <div class="columns">
-
         <!-- DEVICES PAGE -->
-        <div class="column is-6 is-offset-3 box" v-if="this.currentPage == 'devices'">
+        <div class="column is-6 is-offset-3 box" >
           <input v-model="search" class="input" type="text" placeholder="Filter...">
           <table class="table is-striped" style="padding-bottom:50px;">
             <tbody>
@@ -57,7 +47,6 @@
           data: {
             devices: {},
             search: '',
-            currentPage: 'devices',
             serverStatus: false,
             devicesPaired: []
           },
@@ -80,19 +69,6 @@
                 }
 
               });
-            },
-            activePage(page) {
-              if (page == this.currentPage) {
-                return true;
-              } else {
-                return false;
-              }
-            },
-            setPage(page) {
-              this.currentPage = page;
-              if (page == 'devices') {
-                this.getDevices();
-              }
             },
             async addDevice(device) {
               await console.log(device.id, device.name, device.class)

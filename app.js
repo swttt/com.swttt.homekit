@@ -13,7 +13,7 @@ class HomekitApp extends Homey.App {
   // Get homey object
   getApi() {
     if (!this.api) {
-      this.api = HomeyAPI.forCurrentHomey(Homey.env.BEARER_TOKEN);
+      this.api = HomeyAPI.forCurrentHomey();
     }
     return this.api;
   }
