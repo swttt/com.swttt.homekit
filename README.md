@@ -6,7 +6,7 @@ After installing the app grab your iPhone or iPad.
 Got to the Home app on your iOS devices, click the `+` and add new accessory.
 Now you should be able to scan the code below, or add it manually.
 
-[logo]: https://github.com/swttt/com.swttt.homekit/raw/master/settings/code.png "Homekit pair code"
+[logo]: https://github.com/swttt/com.swttt.homekit/blob/master/settings/code.png?raw=true "Homekit pair code"
 
 After Homey is paired, go to settings->Homeykit. There select the devices you want to pair with homekit.
 
