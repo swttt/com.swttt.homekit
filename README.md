@@ -38,5 +38,14 @@ If you like this app, then consider to buy me a beer :)
 
 ### Changelog
 
+##### 1.0.3
+- Added logging (with realtime updating)
+- Changed the devices UI
+- Translated Settings
+
+##### 1.0.2
+- Fixed readme
+- Server object gets local mac adres
+
 ##### 1.0.0
-Initial release
+- Initial release

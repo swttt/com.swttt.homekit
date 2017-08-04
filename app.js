@@ -1,12 +1,28 @@
 "use strict";
+
+const debug = true;
+
 const Homey = require('homey')
-const {
-  HomeyAPI
-} = require('./lib/athom-api.js')
+const { HomeyAPI } = require('./lib/athom-api.js')
 const Homekit = require('./lib/homekit.js')
 
 let allDevices = {},
-    server = {};
+    server = {},
+    log = [];
+
+if (debug) {
+  console.log = function(string, type) {
+    const d = new Date();
+    const n = d.toLocaleTimeString();
+    let item = {};
+    item.time = n;
+    item.string = string;
+    item.type = type;
+    log.push(item);
+    Homey.ManagerApi.realtime('log.new', log)
+      .catch( this.error )
+  };
+}
 
 
 class HomekitApp extends Homey.App {
@@ -23,6 +39,10 @@ class HomekitApp extends Homey.App {
     return allDevices;
   }
 
+  getLog() {
+    return log;
+  }
+
   // Start server function
   async startingServer() {
 
@@ -36,41 +56,31 @@ class HomekitApp extends Homey.App {
     allDevices = await api.devices.getDevices();
 
     server = await Homekit.configServer(systeminfo);
-    // if(Homey.ManagerSettings.get('serverObject')){
-    //   server.accessories = await Homey.ManagerSettings.get('serverObject');
-    // }
-
 
     // Loop all devices
     const allPairedDevices = await Homey.ManagerSettings.get('pairedDevices') || [];
     var arrayLength = await allPairedDevices.length;
 
-    // Get server object
-    // if (!server) {
-    //   await console.log('Empty server object found! Setting config now...')
-    //   server = await Homekit.configServer(systeminfo);
-    // }
-
     for (var i = 0; i < arrayLength; i++) {
       // If device has the class light
       await this.addDevice(allPairedDevices[i]);
     }
-    console.log('\x1b[42m%s\x1b[0m', 'Added all devices..done here!');
+    if(arrayLength){
+      await console.log('Added all devices..done here!', 'success');
+    }
+    else{
+      await console.log('No devices found...', 'info');
+    }
 
     // Start the server
-    server.startServer();
-
-    // console.log(server);
-    // Homey.ManagerSettings.set('serverObject', server.accessories);
-    // Server status to true
-
-
+    await server.startServer();
+    console.log('Homekit server started.', 'success');
   }
 
   async onInit() {
     // Start the server
     await this.startingServer()
-      .then(console.log('\x1b[42m%s\x1b[0m', 'Homekit server starting!'))
+      .then(console.log('Homekit server starting!', 'info'))
       .catch(this.error);
 
   }
@@ -82,39 +92,34 @@ class HomekitApp extends Homey.App {
       // Add light object to server
       let light = await Homekit.createLight(allDevices[device.id], server.config.getHASID(device.id));
       await server.addAccessory(light);
-      console.log(device.name + ' is added!');
+      console.log(device.name + ' is added!', 'success');
     }
     // If device has the class socket
     if (allDevices[device.id].class == 'socket') {
       // Add socket object to server
       let socket = await Homekit.createSocket(allDevices[device.id], server.config.getHASID(device.id));
       await server.addAccessory(socket);
-      console.log(device.name + ' is added!');
+      console.log(device.name + ' is added!', 'success');
     }
     if (allDevices[device.id].class == 'sensor') {
       // Add sensor object to server
       let sensor = await Homekit.createSensor(allDevices[device.id], server.config.getHASID(device.id));
       await server.addAccessory(sensor);
-      console.log(device.name + ' is added!');
+      console.log(device.name + ' is added!', 'success');
     }
     if (allDevices[device.id].class == 'lock') {
       // Add lock object to server
       let lock = await Homekit.createLock(allDevices[device.id], server.config.getHASID(device.id));
       await server.addAccessory(lock);
-      console.log(device.name + ' is added!');
+      console.log(device.name + ' is added!', 'success');
     }
   }
 
-  async deleteDevice(device){
-    console.log(device.id);
+  async deleteDevice(device) {
+    console.log('Trying to remove device ' + device.id, "info");
     server.removeAccessory(server.config.getHASID(device.id));
-    console.log(device.name + ' is removed!');
+    console.log(device.name + ' is removed!', 'success');
   }
-
-  getServerStatus() {
-    return server.isRunning;
-  }
-
 
 }
 

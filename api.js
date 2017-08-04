@@ -16,9 +16,9 @@ module.exports = [
   },
   {
     method: 'GET',
-    path: '/server/status',
+    path: '/log',
     fn: function(args, callback) {
-      callback(null, Homey.app.getServerStatus());
+          callback(null, Homey.app.getLog());
 
     }
   },
@@ -40,7 +40,10 @@ module.exports = [
       Homey.app.deleteDevice(args.body).then(res => {
           callback(null, true);
         })
-        .catch(error => callback(error, null));
+        .catch(error => {
+          console.log(err, 'error')
+          callback(error, null);
+        });
 
     }
   }
