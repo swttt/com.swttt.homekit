@@ -21,6 +21,9 @@ if (debug) {
     log.push(item);
     Homey.ManagerApi.realtime('log.new', log)
       .catch( this.error )
+    if(log.length > 50){
+      log.splice(0,1);
+    }
   };
 }
 
