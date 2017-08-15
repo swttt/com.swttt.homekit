@@ -2,9 +2,14 @@
 
 const debug = true;
 
+// Enable TCP debug
+process.env.DEBUG = 'TCP';
+
 const Homey = require('homey')
 const { HomeyAPI } = require('./lib/athom-api.js')
 const Homekit = require('./lib/homekit.js')
+
+
 
 let allDevices = {},
     server = {},

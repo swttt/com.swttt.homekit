@@ -131,11 +131,13 @@
             await Homey.set('pairedDevices', this.devicesPaired, (err, result) => {
               if (err)
                 return Homey.alert(err);
-              console.log('Device removed');
+              console.log(device.name + ' removed from pairedDevices');
             })
             Homey.api('DELETE', '/devices/delete', device, (err, result) => {
               if (err)
                 return Homey.alert(err);
+
+              console.log(device.name + ' removed from Homekit');
               }
             );
           },

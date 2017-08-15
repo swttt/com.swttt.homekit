@@ -38,6 +38,13 @@ If you like this app, then consider to buy me a beer :)
 
 ### Changelog
 
+#### 1.0.5
+- Fixed undefined/null realtime updates
+- Enabled TCP debugging
+
+#### 1.0.4
+- Limited log size to 50 lines
+
 ##### 1.0.3
 - Added logging (with realtime updating)
 - Changed the devices UI
