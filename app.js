@@ -3,7 +3,7 @@
 const debug = true;
 
 // Enable TCP debug
-process.env.DEBUG = 'TCP';
+// process.env.DEBUG = 'TCP';
 
 const Homey = require('homey')
 const { HomeyAPI } = require('./lib/athom-api.js')
