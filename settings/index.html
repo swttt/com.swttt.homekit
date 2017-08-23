@@ -24,7 +24,7 @@
       <!-- DEVICES PAGE -->
       <div class="columns is-multiline" v-if="currentPage == 'devices'">
         <input v-model="search" class="input" style="margin-left:10px;margin-right:10px;" type="text" placeholder="Filter...">
-        <div class="column is-3 " v-for="device in filteredItems" v-if="device.capabilities.onoff || device.capabilities.alarm_motion || device.capabilities.locked">
+        <div class="column is-3 " v-for="device in filteredItems">
           <div class="box">
             <center>
               <img :src="device.icon" style="height:30px;width:auto;"/><br/>
@@ -77,7 +77,7 @@
               var array = Object.keys(result).map(function (key) {
                 return result[key];
               });
-              this.devices = array.filter(this.filterArray);
+              this.devices = array;
             });
           },
           getLog() {
