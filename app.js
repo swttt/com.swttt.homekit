@@ -106,9 +106,13 @@ class HomekitApp extends Homey.App {
 
   }
 
-  async deleteDevice(device) {
+  async deleteDevice(device)
+  {
     console.log('Trying to remove device ' + device.id, "info");
+
+    allDevices[device.id].removeAllListeners('$state');
     server.removeAccessory(server.config.getHASID(device.id));
+
     console.log(device.name + ' is removed!', 'success');
   }
 
