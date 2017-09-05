@@ -69,7 +69,7 @@ class HomekitApp extends Homey.App {
     const allPairedDevices = await Homey.ManagerSettings.get('pairedDevices') || [];
     var arrayLength = await allPairedDevices.length;
 
-    for (var i = 0; i < arrayLength; i++) {
+    for (let i = 0; i < arrayLength; i++) {
       // If device has the class light
       await this.addDevice(allPairedDevices[i]);
     }
@@ -95,15 +95,42 @@ class HomekitApp extends Homey.App {
 
   async addDevice(device)
   {
-    await this.getDevices();
+    if (device.id in allDevices)
+    {
+      console.log(device.name + ' - device found.', 'info');
 
-    console.log(device.name + ' class: ' + allDevices[device.id].class, 'info');
+      await this.getDevices();
 
-    let light = await Homekit.createDevice(allDevices[device.id], server.config.getHASID(device.id));
-    await server.addAccessory(light);
+      console.log(device.name + ' class: ' + allDevices[device.id].class, 'info');
 
-    console.log(device.name + ' is added!', 'success');
+      let light = await Homekit.createDevice(allDevices[device.id], server.config.getHASID(device.id));
+      await server.addAccessory(light);
 
+      console.log(device.name + ' is added!', 'success');
+
+    }
+    else
+    {
+      console.log(device.name + ' - device not found.', 'info');
+
+      server.removeAccessory(server.config.getHASID(device.id));
+
+      const allPairedDevices = await Homey.ManagerSettings.get('pairedDevices') || [];
+
+      for (let i = 0; i < allPairedDevices.length; i++)
+      {
+        if (allPairedDevices[i] && allPairedDevices[i].id == device.id)
+        {
+          allPairedDevices.splice(i, 1);
+        }
+      }
+      await Homey.ManagerSettings.set('pairedDevices', allPairedDevices, (err, result) =>
+      {
+        if (err)
+          return Homey.alert(err);
+        console.log(device.name + ' removed from pairedDevices');
+      });
+    }
   }
 
   async deleteDevice(device)
