@@ -13,10 +13,27 @@ After Homey is paired, go to settings->Homeykit. There select the devices you wa
 It might take a few sec (sometimes even longer) until your device shows up in your Home app.
 
 For now only the following classes are supported:
-- Light (with RGB or Temperature)
-- Socket
-- Motionsensor (with lux and temp)
+- Light (On-off, dim, Temperature control, RGB)
+- Fan
+- Switch
+- Outlet
 - Doorlock
+- Motion sensor
+- Humidity sensor
+- Light sensor
+- Carbon dioxide sensor
+- Temperature sensor
+- Leak sensor
+- Smoke sensor
+- Contact sensor
+- AirQuality sensor
+- Thermostat
+- Volume speaker
+- Button (simple and play/Pause etc)
+
++ Battery service for all
+
+
 
 ---
 
@@ -32,7 +49,11 @@ Any other feature request can be added there as well.
 
 If you like this app, then consider to buy me a beer :)
 
+BasJansen
 [![Donate](https://www.paypalobjects.com/webstatic/en_US/i/btn/png/btn_donate_92x26.png)](https://paypal.me/BasJansen)
+
+Sprut
+[![Donate](https://www.paypalobjects.com/webstatic/en_US/i/btn/png/btn_donate_92x26.png)](https://paypal.me/sprut666666)
 
 ---
 
