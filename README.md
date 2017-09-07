@@ -29,6 +29,7 @@ For now only the following classes are supported:
 - AirQuality sensor
 - Thermostat
 - Volume speaker
+- Vacuum cleaner
 - Button (simple and play/Pause etc)
 
 + Battery service for all
@@ -58,6 +59,32 @@ Sprut
 ---
 
 ### Changelog
+
+#### 1.3.1
+- Add Vacuum cleaner
+
+#### 1.3.0
+- optimization and performance
+- support delete devices in Homey
+- many fix & etc
+Add:
+- Fan
+- Switch
+- Outlet
+- Humidity sensor
+- Light sensor
+- Carbon dioxide sensor
+- Temperature sensor
+- Leak sensor
+- Smoke sensor
+- Contact sensor
+- AirQuality sensor
+- Thermostat
+- Volume speaker
+- Vacuum cleaner
+- Button (simple and play/Pause etc)
+
++ Battery service for all
 
 #### 1.0.5
 - Fixed undefined/null realtime updates
