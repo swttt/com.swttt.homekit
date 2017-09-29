@@ -1,6 +1,6 @@
 "use strict";
 
-const debug = true;
+const debug = false;
 
 // Enable TCP debug
 // process.env.DEBUG = 'TCP';
