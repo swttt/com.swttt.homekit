@@ -1,0 +1,30 @@
+{
+  "id": "com.swttt.homekit",
+  "sdk": 2,
+  "permissions": [
+    "homey:manager:api"
+  ],
+  "name": {
+    "en": "HomeyKit",
+    "nl": "HomeyKit"
+  },
+  "description": {
+    "en": "Homekit support for Homey",
+    "nl": "Homekit ondersteuning voor Homey"
+  },
+  "tags": {
+    "en": ["homekit", "siri", "iOS"],
+    "nl": ["homekit", "siri", "iOS"]
+  },
+  "category": "appliances",
+  "version": "1.0.5",
+  "compatibility": ">=1.5.0",
+  "author": {
+    "name": "Bas Jansen",
+    "email": "b@sjansen.email"
+  },
+  "images": {
+    "large": "./assets/images/large.png",
+    "small": "./assets/images/small.png"
+  }
+}
