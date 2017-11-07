@@ -83,7 +83,7 @@ class HomekitApp extends Homey.App {
     bridge.publish({
       username: "CC:22:3D:E3:CE:F6",
       port: 51826,
-      pincode: "220-20-220",
+      pincode: "200-20-200",
       category: Accessory.Categories.BRIDGE
     });
     console.log("Started bridge");
