@@ -101,6 +101,10 @@ class HomekitApp extends Homey.App {
       console.log('Found blinds (state): ' + device.name)
       bridge.addBridgedAccessory(homekit.createStateBlinds(device, api));
     }
+    else if (device.class === 'windowcoverings' && device.capabilities.dim) {
+      console.log('Found blinds (state): ' + device.name)
+      bridge.addBridgedAccessory(homekit.createDimBlinds(device, api));
+    }
     else {
       console.log('No matching class found for: ' + device.name)
     }
