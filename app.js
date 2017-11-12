@@ -126,6 +126,10 @@ class HomekitApp extends Homey.App {
       console.log('Found thermostat: ' + device.name)
       bridge.addBridgedAccessory(homekit.createThermostat(device, api));
     }
+    else if (device.class === 'sensor' && 'alarm_contact' in device.capabilities) {
+      console.log('Found contact sensor: ' + device.name)
+      bridge.addBridgedAccessory(homekit.createContactSensor(device, api));
+    }
     else {
       console.log('No matching class found for: ' + device.name)
     }
