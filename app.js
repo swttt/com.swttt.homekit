@@ -47,9 +47,11 @@ class HomekitApp extends Homey.App {
     const api = await this.getApi();
     // Subscribe to realtime events and set all devices global
     await api.devices.subscribe();
-    api.devices.on('device.create', async (id) => {
+    api.devices.on('device.create', async(id) => {
       await console.log('New device found!')
-      const device = await api.devices.getDevice({id: id})
+      const device = await api.devices.getDevice({
+        id: id
+      })
       await this.addDevice(device);
     });
     allDevices = await api.devices.getDevices();
@@ -87,25 +89,27 @@ class HomekitApp extends Homey.App {
   }
 
   addDevice(device, api) {
-    if(device.class === 'light' && device.capabilities.onoff){
-      console.log('Found light: '+device.name)
+    if (device.class === 'light' && device.capabilities.onoff) {
+      console.log('Found light: ' + device.name)
       bridge.addBridgedAccessory(homekit.createLight(device, api));
     }
-    else if(device.class === 'lock'){
-      console.log('Found lock: '+device.name)
+    else if (device.class === 'lock') {
+      console.log('Found lock: ' + device.name)
       bridge.addBridgedAccessory(homekit.createLock(device, api));
     }
-	else if(device.class === 'windowcoverings' && device.capabilities.windowcoverings_state){
-      console.log('Found blinds (state): '+device.name)
+    else if (device.class === 'windowcoverings' && device.capabilities.windowcoverings_state && !device.capabilities.dim) {
+      console.log('Found blinds (state): ' + device.name)
       bridge.addBridgedAccessory(homekit.createStateBlinds(device, api));
     }
-    else{
+    else {
       console.log('No matching class found for: ' + device.name)
     }
 
     device.on('$delete', id => {
       console.log('Found delete for: ' + device.id)
-      bridge.removeBridgedAccessory(_.find(bridge.bridgedAccessories, function(removedDev) { return removedDev.UUID === device.id; }));
+      bridge.removeBridgedAccessory(_.find(bridge.bridgedAccessories, function(removedDev) {
+        return removedDev.UUID === device.id;
+      }));
     });
   }
 
