@@ -122,6 +122,10 @@ class HomekitApp extends Homey.App {
       console.log('Found button: ' + device.name)
       bridge.addBridgedAccessory(homekit.createButton(device, api));
     }
+    else if (device.class === 'thermostat') {
+      console.log('Found thermostat: ' + device.name)
+      bridge.addBridgedAccessory(homekit.createThermostat(device, api));
+    }
     else {
       console.log('No matching class found for: ' + device.name)
     }
