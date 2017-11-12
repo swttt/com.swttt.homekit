@@ -105,6 +105,10 @@ class HomekitApp extends Homey.App {
       console.log('Found blinds (state): ' + device.name)
       bridge.addBridgedAccessory(homekit.createDimBlinds(device, api));
     }
+	else if (device.class === 'socket') {
+      console.log('Found socket: ' + device.name)
+      bridge.addBridgedAccessory(homekit.createSocket(device, api));
+    }
     else {
       console.log('No matching class found for: ' + device.name)
     }
