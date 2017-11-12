@@ -8,16 +8,20 @@ Now you should be able to scan the code below, or add it manually.
 
 ![Image of paircode](https://github.com/swttt/com.swttt.homekit/raw/master/settings/code.png)
 
-After Homey is paired, go to settings->Homeykit. There select the devices you want to pair with homekit.
+After Homey has paired with HomeKit all your devices will be added. When you add or remove a device from Homey the same wil happen in HomeKit.
 
-It might take a few sec (sometimes even longer) until your device shows up in your Home app.
+A future release wil support excluding zones or devices from HomeKit.
 
-For now only the following classes are supported:
+The following classes are supported:
 - Light (with RGB or Temperature)
 - Socket
+- Switch
 - Motionsensor (with lux and temp)
 - Doorlock
-- Door/Window sensor
+- Door/Window sensor (with temp)
+- Thermostat
+- Windowblinds
+- Button
 
 ---
 
@@ -31,7 +35,7 @@ Any other feature request can be added there as well.
 
 ### Changelog
 
-##### 2.0.x
+##### 2.0.4
 - Beta appstore release
 
 ---
