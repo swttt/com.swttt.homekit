@@ -90,7 +90,7 @@ class HomekitApp extends Homey.App {
 
   // Add device function
   addDevice(device, api) {
-    if (device.class === 'light' && device.capabilities.onoff) {
+    if (device.class === 'light' && 'onoff' in device.capabilities) {
       console.log('Found light: ' + device.name)
       bridge.addBridgedAccessory(homekit.createLight(device, api));
     }
@@ -98,25 +98,29 @@ class HomekitApp extends Homey.App {
       console.log('Found lock: ' + device.name)
       bridge.addBridgedAccessory(homekit.createLock(device, api));
     }
-    else if (device.class === 'windowcoverings' && device.capabilities.windowcoverings_state && !device.capabilities.dim) {
+    else if (device.class === 'windowcoverings' && 'windowcoverings_state' in device.capabilities && !('dim' in device.capabilities) ) {
       console.log('Found blinds (state): ' + device.name)
       bridge.addBridgedAccessory(homekit.createStateBlinds(device, api));
     }
-    else if (device.class === 'windowcoverings' && device.capabilities.dim) {
+    else if (device.class === 'windowcoverings' && 'dim' in device.capabilities) {
       console.log('Found blinds (state): ' + device.name)
       bridge.addBridgedAccessory(homekit.createDimBlinds(device, api));
     }
-    else if (device.class === 'socket' && device.capabilities.onoff) {
+    else if (device.class === 'socket' && 'onoff' in device.capabilities) {
       console.log('Found socket: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSocket(device, api));
     }
-    else if (device.class === 'other' && device.capabilities.onoff) {
+    else if (device.class === 'other' && 'onoff' in device.capabilities) {
       console.log('Found other with onoff: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSwitch(device, api));
     }
-    else if (device.class === 'sensor' && device.capabilities.alarm_motion) {
+    else if (device.class === 'sensor' && 'alarm_motion' in device.capabilities) {
       console.log('Found motion sensor: ' + device.name)
       bridge.addBridgedAccessory(homekit.createMotionSensor(device, api));
+    }
+    else if ('button' in device.capabilities) {
+      console.log('Found button: ' + device.name)
+      bridge.addBridgedAccessory(homekit.createButton(device, api));
     }
     else {
       console.log('No matching class found for: ' + device.name)
