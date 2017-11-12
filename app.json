@@ -17,11 +17,16 @@
     "nl": ["homekit", "siri", "iOS"]
   },
   "category": "appliances",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "compatibility": ">=1.5.0",
   "author": {
     "name": "Bas Jansen",
     "email": "b@sjansen.email"
+  },
+  "contributors": {
+    "developers": [{
+      "name": "Niek Hassink"
+    }]
   },
   "images": {
     "large": "./assets/images/large.png",
