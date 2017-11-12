@@ -61,20 +61,19 @@ class HomekitApp extends Homey.App {
     bridge.getService(Service.AccessoryInformation)
       .setCharacteristic(Characteristic.Manufacturer, 'Athom')
       .setCharacteristic(Characteristic.Model, 'Homey');
+
     // Listen for bridge identification event
     bridge.on('identify', function(paired, callback) {
       console.log("Homey identify");
       callback(); // success
     });
 
+    // Loop devices
     _.forEach(allDevices, (device) => {
-
       this.addDevice(device, api);
-
-
-
     });
 
+    // Publish bridge
     bridge.publish({
       username: "CC:22:3D:E3:CE:F6",
       port: 51826,
@@ -84,10 +83,12 @@ class HomekitApp extends Homey.App {
     console.log("Started bridge");
   }
 
+  // On app init
   onInit() {
     this.startingServer();
   }
 
+  // Add device function
   addDevice(device, api) {
     if (device.class === 'light' && device.capabilities.onoff) {
       console.log('Found light: ' + device.name)
@@ -105,9 +106,13 @@ class HomekitApp extends Homey.App {
       console.log('Found blinds (state): ' + device.name)
       bridge.addBridgedAccessory(homekit.createDimBlinds(device, api));
     }
-	else if (device.class === 'socket') {
+    else if (device.class === 'socket' && device.capabilities.onoff) {
       console.log('Found socket: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSocket(device, api));
+    }
+    else if (device.class === 'other' && device.capabilities.onoff) {
+      console.log('Found other with onoff: ' + device.name)
+      bridge.addBridgedAccessory(homekit.createSwitch(device, api));
     }
     else {
       console.log('No matching class found for: ' + device.name)

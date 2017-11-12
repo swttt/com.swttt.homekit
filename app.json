@@ -23,11 +23,24 @@
     "name": "Bas Jansen",
     "email": "b@sjansen.email"
   },
+  "contributing": {
+    "donate": {
+      "paypal": {
+        "email": "b@sjansen.email",
+        "currency": "EUR"
+      }
+    }
+  },
   "contributors": {
     "developers": [{
-      "name": "Niek Hassink",
-      "email": "n.hassink@gmail.com"
-    }]
+        "name": "Bas Jansen",
+        "email": "b@sjansen.email"
+      },
+      {
+        "name": "Niek Hassink",
+        "email": "n.hassink@gmail.com"
+      }
+    ]
   },
   "images": {
     "large": "./assets/images/large.png",
