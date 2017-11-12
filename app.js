@@ -114,6 +114,10 @@ class HomekitApp extends Homey.App {
       console.log('Found other with onoff: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSwitch(device, api));
     }
+    else if (device.class === 'sensor' && device.capabilities.alarm_motion) {
+      console.log('Found motion sensor: ' + device.name)
+      bridge.addBridgedAccessory(homekit.createMotionSensor(device, api));
+    }
     else {
       console.log('No matching class found for: ' + device.name)
     }
