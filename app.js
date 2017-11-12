@@ -95,6 +95,10 @@ class HomekitApp extends Homey.App {
       console.log('Found lock: '+device.name)
       bridge.addBridgedAccessory(homekit.createLock(device, api));
     }
+	else if(device.class === 'windowcoverings' && device.capabilities.windowcoverings_state){
+      console.log('Found blinds (state): '+device.name)
+      bridge.addBridgedAccessory(homekit.createStateBlinds(device, api));
+    }
     else{
       console.log('No matching class found for: ' + device.name)
     }
