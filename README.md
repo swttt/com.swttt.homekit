@@ -29,17 +29,10 @@ Any other feature request can be added there as well.
 
 ---
 
-### Special thanks to
-
-  - [abedinpour (has-node)](https://github.com/abedinpour/HAS)
-
----
-
 ### Changelog
 
 ##### 2.0.x
-- Fixed readme
-- Server object gets local mac adres
+- Beta appstore release
 
 ---
 
