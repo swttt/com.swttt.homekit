@@ -35,6 +35,11 @@ Any other feature request can be added there as well.
 
 ### Changelog
 
+##### 2.0.5
+- Fixed contact sensor
+
+---
+
 ##### 2.0.4
 - Beta appstore release
 
