@@ -3,20 +3,25 @@
 With this app you can pair Homey to Homekit and control your devices using Siri.
 
 After installing the app grab your iPhone or iPad.
-Go to the Home app on your iOS devices, click the `+` and add new accessory.
+Got to the Home app on your iOS devices, click the `+` and add new accessory.
 Now you should be able to scan the code below, or add it manually.
 
-![Image of paircode](https://github.com/swttt/com.swttt.homekit/raw/master/settings/code.png)
+![Image of paircode](https://github.com/swttt/com.swttt.homekit/raw/master/code.png)
 
-After Homey is paired, go to settings->Homeykit. There select the devices you want to pair with homekit.
+After Homey has paired with HomeKit all your devices will be added. When you add or remove a device from Homey the same wil happen in HomeKit.
 
-It might take a few sec (sometimes even longer) until your device shows up in your Home app.
+A future release wil support excluding zones or devices from HomeKit.
 
-For now only the following classes are supported:
+The following classes are supported:
 - Light (with RGB or Temperature)
 - Socket
+- Switch
 - Motionsensor (with lux and temp)
 - Doorlock
+- Door/Window sensor (with temp)
+- Thermostat
+- Windowblinds
+- Button
 
 ---
 
@@ -28,35 +33,12 @@ Any other feature request can be added there as well.
 
 ---
 
-### Donate
+### Changelog
 
-If you like this app, then consider to buy me a beer :)
-
-[![Donate](https://www.paypalobjects.com/webstatic/en_US/i/btn/png/btn_donate_92x26.png)](https://paypal.me/BasJansen)
+##### 2.0.4
+- Beta appstore release
 
 ---
 
-### Changelog
-
-#### 1.0.8
-- Small fixed
-- Disabled TCP debugging
-
-#### 1.0.5
-- Fixed undefined/null realtime updates
-- Enabled TCP debugging
-
-#### 1.0.4
-- Limited log size to 50 lines
-
-##### 1.0.3
-- Added logging (with realtime updating)
-- Changed the devices UI
-- Translated Settings
-
-##### 1.0.2
-- Fixed readme
-- Server object gets local mac adres
-
-##### 1.0.0
-- Initial release
+##### 2.0.0
+- Initial release where has-node got replaced by hap-nodejs
