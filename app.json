@@ -17,7 +17,7 @@
     "nl": ["homekit", "siri", "iOS"]
   },
   "category": "appliances",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "compatibility": ">=1.5.0",
   "author": {
     "name": "Bas Jansen",
