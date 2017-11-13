@@ -36,6 +36,12 @@ Any other feature request can be added there as well.
 ### Changelog
 
 ##### 2.0.5
+- Small fixes
+- Thermostat display units added
+
+---
+
+##### 2.0.5
 - Fixed contact sensor
 
 ---
