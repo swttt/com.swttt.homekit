@@ -35,6 +35,23 @@ Any other feature request can be added there as well.
 
 ### Changelog
 
+##### 2.0.6
+- Fixed color bulbs
+- Fixed thermostat
+
+---
+
+##### 2.0.5
+- Small fixes
+- Thermostat display units added
+
+---
+
+##### 2.0.5
+- Fixed contact sensor
+
+---
+
 ##### 2.0.4
 - Beta appstore release
 
