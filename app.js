@@ -113,11 +113,7 @@ class HomekitApp extends Homey.App {
     else if (device.class === 'other' && 'onoff' in device.capabilities) {
       console.log('Found other with onoff: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSwitch(device, api));
-    }
-    else if (device.class === 'sensor' && 'alarm_motion' in device.capabilities) {
-      console.log('Found motion sensor: ' + device.name)
-      bridge.addBridgedAccessory(homekit.createMotionSensor(device, api));
-    }
+    }   
     else if ('button' in device.capabilities) {
       console.log('Found button: ' + device.name)
       bridge.addBridgedAccessory(homekit.createButton(device, api));
@@ -126,21 +122,31 @@ class HomekitApp extends Homey.App {
       console.log('Found thermostat: ' + device.name)
       bridge.addBridgedAccessory(homekit.createThermostat(device, api));
     }
-    else if (device.class === 'sensor' && 'alarm_contact' in device.capabilities) {
-      console.log('Found contact sensor: ' + device.name)
-      bridge.addBridgedAccessory(homekit.createContactSensor(device, api));
+	else if (device.class === 'doorbell') {
+      console.log('Found doorbell: ' + device.name)
+      bridge.addBridgedAccessory(homekit.createDoorbell(device, api));
     }
-	else if (device.class === 'sensor' && 'alarm_smoke' in device.capabilities) {
-      console.log('Found smoke sensor: ' + device.name)
-      bridge.addBridgedAccessory(homekit.createSmokeSensor(device, api));
-    }
-	else if (device.class === 'sensor' && 'alarm_co' in device.capabilities) {
-      console.log('Found CO sensor: ' + device.name)
-      bridge.addBridgedAccessory(homekit.createCOSensor(device, api));
-    }
-	else if (device.class === 'sensor' && 'alarm_co2' in device.capabilities) {
-      console.log('Found CO2 sensor: ' + device.name)
-      bridge.addBridgedAccessory(homekit.createCO2Sensor(device, api));
+	else if (device.class === 'sensor') { 
+		if ('alarm_motion' in device.capabilities) {
+	      	console.log('Found motion sensor: ' + device.name)
+	      	bridge.addBridgedAccessory(homekit.createMotionSensor(device, api));
+	    }  
+		if ('alarm_contact' in device.capabilities) {
+			console.log('Found contact sensor: ' + device.name)
+			bridge.addBridgedAccessory(homekit.createContactSensor(device, api));
+		}
+		if ('alarm_smoke' in device.capabilities) {
+			console.log('Found smoke sensor: ' + device.name)
+			bridge.addBridgedAccessory(homekit.createSmokeSensor(device, api));
+		}
+		if ('alarm_co' in device.capabilities) {
+			console.log('Found CO sensor: ' + device.name)
+			bridge.addBridgedAccessory(homekit.createCOSensor(device, api));
+		}
+		if ('alarm_co' in device.capabilities) {
+			console.log('Found CO2 sensor: ' + device.name)
+			bridge.addBridgedAccessory(homekit.createCOSensor(device, api));
+		}
     }
     else {
       console.log('No matching class found for: ' + device.name)
