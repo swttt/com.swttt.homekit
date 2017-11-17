@@ -134,6 +134,14 @@ class HomekitApp extends Homey.App {
       console.log('Found smoke sensor: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSmokeSensor(device, api));
     }
+	else if (device.class === 'sensor' && 'alarm_co' in device.capabilities) {
+      console.log('Found CO sensor: ' + device.name)
+      bridge.addBridgedAccessory(homekit.createCOSensor(device, api));
+    }
+	else if (device.class === 'sensor' && 'alarm_co2' in device.capabilities) {
+      console.log('Found CO2 sensor: ' + device.name)
+      bridge.addBridgedAccessory(homekit.createCO2Sensor(device, api));
+    }
     else {
       console.log('No matching class found for: ' + device.name)
     }
