@@ -122,7 +122,7 @@ class HomekitApp extends Homey.App {
       console.log('Found thermostat: ' + device.name)
       bridge.addBridgedAccessory(homekit.createThermostat(device, api));
     }
-	else if (device.class === 'doorbell') {
+	else if (device.class === 'doorbell' && 'alarm_generic' in device.capabilities) {
       console.log('Found doorbell: ' + device.name)
       bridge.addBridgedAccessory(homekit.createDoorbell(device, api));
     }
@@ -135,17 +135,9 @@ class HomekitApp extends Homey.App {
 			console.log('Found contact sensor: ' + device.name)
 			bridge.addBridgedAccessory(homekit.createContactSensor(device, api));
 		}
-		if ('alarm_smoke' in device.capabilities) {
-			console.log('Found smoke sensor: ' + device.name)
+		if ('alarm_smoke' in device.capabilities || 'alarm_co' in device.capabilities || 'alarm_co2' in device.capabilities) {
+			console.log('Found smoke/CO/CO2 sensor: ' + device.name)
 			bridge.addBridgedAccessory(homekit.createSmokeSensor(device, api));
-		}
-		if ('alarm_co' in device.capabilities) {
-			console.log('Found CO sensor: ' + device.name)
-			bridge.addBridgedAccessory(homekit.createCOSensor(device, api));
-		}
-		if ('alarm_co' in device.capabilities) {
-			console.log('Found CO2 sensor: ' + device.name)
-			bridge.addBridgedAccessory(homekit.createCOSensor(device, api));
 		}
     }
     else {
