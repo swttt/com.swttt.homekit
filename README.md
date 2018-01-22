@@ -35,9 +35,17 @@ Any other feature request can be added there as well.
 
 ### Changelog
 
-##### 2.0.6
+#### 2.0.8
+- Multiple devices added (see https://github.com/swttt/com.swttt.homekit/pull/54 )
+
+##### 2.0.7
 - Fixed color bulbs
 - Fixed thermostat
+
+---
+
+##### 2.0.6
+- Small fixes
 
 ---
 
