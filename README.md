@@ -35,6 +35,9 @@ Any other feature request can be added there as well.
 
 ### Changelog
 
+### 2.0.9
+- Bugfixes in smoke and temperature class
+
 #### 2.0.8
 - Multiple devices added (see https://github.com/swttt/com.swttt.homekit/pull/54 )
 
