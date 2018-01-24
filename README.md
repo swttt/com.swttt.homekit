@@ -35,6 +35,9 @@ Any other feature request can be added there as well.
 
 ### Changelog
 
+### 2.0.10
+- Fix for sensors
+
 ### 2.0.9
 - Bugfixes in smoke and temperature class
 
