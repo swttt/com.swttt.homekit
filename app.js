@@ -126,6 +126,10 @@ class HomekitApp extends Homey.App {
       console.log('Found doorbell: ' + device.name)
       bridge.addBridgedAccessory(homekit.createDoorbell(device, api));
     }
+ 	else if ('homealarm_state' in device.capabilities) {
+      console.log('Found Security system: ' + device.name)
+      bridge.addBridgedAccessory(homekit.createSecuritySystem(device, api));
+    }
     else if (device.class === 'sensor') {
       if ('alarm_motion' in device.capabilities) {
         console.log('Found motion sensor: ' + device.name)
