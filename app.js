@@ -130,23 +130,9 @@ class HomekitApp extends Homey.App {
       console.log('Found Security system: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSecuritySystem(device, api));
     }
-    else if (device.class === 'sensor') {
-      if ('alarm_motion' in device.capabilities) {
-        console.log('Found motion sensor: ' + device.name)
-        bridge.addBridgedAccessory(homekit.createMotionSensor(device, api));
-      }
-      else if ('alarm_contact' in device.capabilities) {
-        console.log('Found contact sensor: ' + device.name)
-        bridge.addBridgedAccessory(homekit.createContactSensor(device, api));
-      }
-      else if ('alarm_smoke' in device.capabilities || 'alarm_co' in device.capabilities || 'alarm_co2' in device.capabilities) {
-        console.log('Found smoke/CO/CO2 sensor: ' + device.name)
-        bridge.addBridgedAccessory(homekit.createSmokeSensor(device, api));
-      }
-      else if ('measure_temperature' in device.capabilities || 'measure_humidity' in device.capabilities) {
-        console.log('Found temperature/humidity sensor: ' + device.name)
-        bridge.addBridgedAccessory(homekit.createTemperatureSensor(device, api));
-      }
+    else if (device.class === 'sensor' && ('measure_luminance' in device.capabilities || 'measure_temperature' in device.capabilities || 'measure_humidity' in device.capabilities || 'alarm_motion' in device.capabilities || 'alarm_water' in device.capabilities || 'alarm_contact' in device.capabilities || 'alarm_smoke' in device.capabilities || 'alarm_co' in device.capabilities || 'alarm_co2' in device.capabilities)) {
+	  console.log('Found Sensor: ' + device.name)
+      bridge.addBridgedAccessory(homekit.createSensor(device, api));
     }
     else {
       console.log('No matching class found for: ' + device.name)
