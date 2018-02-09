@@ -110,6 +110,10 @@ class HomekitApp extends Homey.App {
       console.log('Found socket: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSocket(device, api));
     }
+	else if (device.class === 'fan' && 'onoff' in device.capabilities) {
+      console.log('Found fan: ' + device.name)
+      bridge.addBridgedAccessory(homekit.createFan(device, api));
+    }
     else if (device.class === 'other' && 'onoff' in device.capabilities) {
       console.log('Found other with onoff: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSwitch(device, api));
