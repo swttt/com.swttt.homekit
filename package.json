@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "athom-api": "^2.0.96",
-    "bonjour": "^3.5.0",
+    "bonjour": "github:abedinpour/bonjour#refactoring_and_update_txt_support",
     "hap-nodejs": "^0.4.41",
     "lodash": "^4.17.5",
     "os": "^0.1.1"
