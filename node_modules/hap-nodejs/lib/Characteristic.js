@@ -47,6 +47,7 @@ function Characteristic(displayName, UUID, props) {
   this.UUID = UUID;
   this.iid = null; // assigned by our containing Service
   this.value = null;
+  this.status = null;
   this.eventOnlyCharacteristic = false;
   this.props = props || {
     format: null,
@@ -56,6 +57,8 @@ function Characteristic(displayName, UUID, props) {
     minStep: null,
     perms: []
   };
+
+  this.subscriptions = 0;
 }
 
 inherits(Characteristic, EventEmitter);
@@ -126,6 +129,23 @@ Characteristic.prototype.setProps = function(props) {
   return this;
 }
 
+
+Characteristic.prototype.subscribe = function () {
+  if (this.subscriptions === 0) {
+    this.emit('subscribe');
+  }
+  this.subscriptions++;
+}
+
+Characteristic.prototype.unsubscribe = function() {
+  var wasOne = this.subscriptions === 1;
+  this.subscriptions--;
+  this.subscriptions = Math.max(this.subscriptions, 0);
+  if (wasOne) {
+    this.emit('unsubscribe');
+  }
+}
+
 Characteristic.prototype.getValue = function(callback, context, connectionID) {
   // Handle special event only characteristics.
   if (this.eventOnlyCharacteristic === true) {
@@ -140,7 +160,7 @@ Characteristic.prototype.getValue = function(callback, context, connectionID) {
 
     // allow a listener to handle the fetching of this value, and wait for completion
     this.emit('get', once(function(err, newValue) {
-
+      this.status = err;
       if (err) {
         // pass the error along to our callback
         if (callback) callback(err);
@@ -166,7 +186,7 @@ Characteristic.prototype.getValue = function(callback, context, connectionID) {
 
     // no one is listening to the 'get' event, so just return the cached value
     if (callback)
-      callback(null, this.value);
+      callback(this.status, this.value);
   }
 }
 
@@ -215,7 +235,7 @@ Characteristic.prototype.validateValue = function(newValue) {
       maxValue_resolved=18446744073709551615;
       isNumericType=true;
       break;
-    //All of the following datatypes return from this switch.    
+    //All of the following datatypes return from this switch.
      case 'bool':
       return (newValue == true); //We don't need to make sure this returns true or false
       break;
@@ -225,7 +245,7 @@ Characteristic.prototype.validateValue = function(newValue) {
       var maxLength = this.props.maxLen;
       if (maxLength === undefined) maxLength=64; //Default Max Length is 64.
       if (myString.length>maxLength) myString = myString.substring(0,maxLength); //Truncate strings that are too long
-      return myString; //We don't need to do any validation after having truncated the string   
+      return myString; //We don't need to do any validation after having truncated the string
       break;
     case 'data':
       var maxLength = this.props.maxDataLen;
@@ -240,7 +260,7 @@ Characteristic.prototype.validateValue = function(newValue) {
     default: //Datatype out of HAP Spec encountered. We'll assume the developer knows what they're doing.
       return newValue;
     };
-    
+
   if (isNumericType) {
     if (isNaN(newValue)) return this.value; //This is not a number so we'll just pass out the last value.
     if (newValue === false) return 0;
@@ -248,12 +268,12 @@ Characteristic.prototype.validateValue = function(newValue) {
     if ((!isNaN(this.props.maxValue))&&(this.props.maxValue!==null)) maxValue_resolved=this.props.maxValue;
     if ((!isNaN(this.props.minValue))&&(this.props.minValue!==null)) minValue_resolved=this.props.minValue;
     if ((!isNaN(this.props.minStep))&&(this.props.minStep!==null)) minStep_resolved=this.props.minStep;
-  
+
     if (newValue<minValue_resolved) newValue = minValue_resolved; //Fails Minimum Value Test
     if (newValue>maxValue_resolved) newValue = maxValue_resolved; //Fails Maximum Value Test
     if (minStep_resolved!==undefined) {
       //Determine how many decimals we need to display
-      if (Math.floor(minStep_resolved) === minStep_resolved) 
+      if (Math.floor(minStep_resolved) === minStep_resolved)
         stepDecimals = 0;
       else
         stepDecimals = minStep_resolved.toString().split(".")[1].length || 0;
@@ -270,10 +290,10 @@ Characteristic.prototype.validateValue = function(newValue) {
         }
       } catch (e) {
         return this.value; //If we had an error, return the current value.
-      }      
+      }
     }
 
-    if (this['valid-values']!==undefined) 
+    if (this['valid-values']!==undefined)
       if (!this['valid-values'].includes(newValue)) return this.value; //Fails Valid Values Test
     if (this['valid-values-range']!==undefined) { //This is another way Apple has to handle min/max
       if (newValue<this['valid-values-range'][0]) newValue=this['valid-values-range'][0];
@@ -284,13 +304,20 @@ Characteristic.prototype.validateValue = function(newValue) {
 }
 
 Characteristic.prototype.setValue = function(newValue, callback, context, connectionID) {
+
+  if ( newValue instanceof Error ) {
+    this.status = newValue
+  } else {
+    this.status = null;
+  }
+
   newValue = this.validateValue(newValue); //validateValue returns a value that has be cooerced into a valid value.
 
   if (this.listeners('set').length > 0) {
 
     // allow a listener to handle the setting of this value, and wait for completion
     this.emit('set', newValue, once(function(err) {
-
+      this.status = err;
       if (err) {
         // pass the error along to our callback
         if (callback) callback(err);
@@ -326,8 +353,15 @@ Characteristic.prototype.setValue = function(newValue, callback, context, connec
 }
 
 Characteristic.prototype.updateValue = function(newValue, callback, context) {
+
+  if ( newValue instanceof Error ) {
+    this.status = newValue
+  } else {
+    this.status = null;
+  }
+
   newValue = this.validateValue(newValue); //validateValue returns a value that has be cooerced into a valid value.
-  
+
   if (newValue === undefined || newValue === null)
     newValue = this.getDefaultValue();
     // no one is listening to the 'set' event, so just assign the value blindly
