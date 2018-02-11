@@ -35,6 +35,11 @@ Any other feature request can be added there as well.
 
 ### Changelog
 
+### 2.0.11
+- Updated hap-nodejs, lodash and athom-api
+- Added alarm system support for Heimdall
+- Added fan support
+
 ### 2.0.10
 - Fix for sensors
 
