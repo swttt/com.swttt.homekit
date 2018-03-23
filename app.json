@@ -26,7 +26,8 @@
   "contributing": {
     "donate": {
       "paypal": {
-        "username": "BasJansen"
+        "username": "BasJansen",
+        "currency": "EUR"
       }
     }
   },
