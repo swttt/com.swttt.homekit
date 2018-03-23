@@ -110,11 +110,11 @@ class HomekitApp extends Homey.App {
       console.log('Found socket: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSocket(device, api));
     }
-	else if ((device.class === 'fan' || device.class === 'heater') && 'onoff' in device.capabilities) {
-      console.log('Found fan/heater: ' + device.name)
+    else if ((device.class === 'fan' || device.class === 'heater') && 'onoff' in capabilities) {
+      console.log('Found fan: ' + device.name)
       bridge.addBridgedAccessory(homekit.createFan(device, api));
     }
-    else if (['amplifier', 'coffeemachine', 'kettle', 'tv', 'other'].indexOf(device.class) >= 0 && 'onoff' in device.capabilities) {
+	  else if (['amplifier', 'coffeemachine', 'kettle', 'tv', 'other'].includes(device.class) && 'onoff' in capabilities) {
       console.log('Found class with onoff: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSwitch(device, api));
     }
@@ -130,7 +130,7 @@ class HomekitApp extends Homey.App {
       console.log('Found doorbell: ' + device.name)
       bridge.addBridgedAccessory(homekit.createDoorbell(device, api));
     }
- 	else if ('homealarm_state' in device.capabilities) {
+ 	  else if ('homealarm_state' in device.capabilities) {
       console.log('Found Security system: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSecuritySystem(device, api));
     }
