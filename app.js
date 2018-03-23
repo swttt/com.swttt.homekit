@@ -110,12 +110,12 @@ class HomekitApp extends Homey.App {
       console.log('Found socket: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSocket(device, api));
     }
-	else if (device.class === 'fan' && 'onoff' in device.capabilities) {
-      console.log('Found fan: ' + device.name)
+	else if ((device.class === 'fan' || device.class === 'heater') && 'onoff' in device.capabilities) {
+      console.log('Found fan/heater: ' + device.name)
       bridge.addBridgedAccessory(homekit.createFan(device, api));
     }
-    else if (device.class === 'other' && 'onoff' in device.capabilities) {
-      console.log('Found other with onoff: ' + device.name)
+    else if (['amplifier', 'coffeemachine', 'kettle', 'tv', 'other'].indexOf(device.class) >= 0 && 'onoff' in device.capabilities) {
+      console.log('Found class with onoff: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSwitch(device, api));
     }
     else if ('button' in device.capabilities) {
@@ -134,12 +134,12 @@ class HomekitApp extends Homey.App {
       console.log('Found Security system: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSecuritySystem(device, api));
     }
-    else if (device.class === 'sensor' && ('measure_luminance' in device.capabilities || 'measure_temperature' in device.capabilities || 'measure_humidity' in device.capabilities || 'alarm_motion' in device.capabilities || 'alarm_water' in device.capabilities || 'alarm_contact' in device.capabilities || 'alarm_smoke' in device.capabilities || 'alarm_co' in device.capabilities || 'alarm_co2' in device.capabilities)) {
+    else if ((device.class === 'sensor' || device.class === 'other') && ('measure_luminance' in device.capabilities || 'measure_temperature' in device.capabilities || 'measure_humidity' in device.capabilities || 'alarm_motion' in device.capabilities || 'alarm_water' in device.capabilities || 'alarm_contact' in device.capabilities || 'alarm_smoke' in device.capabilities || 'alarm_co' in device.capabilities || 'alarm_co2' in device.capabilities)) {
 	  console.log('Found Sensor: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSensor(device, api));
     }
     else {
-      console.log('No matching class found for: ' + device.name)
+      console.log('No matching class found for: ' + device.name + ' of class: ' + device.class)
     }
 
     device.on('$delete', id => {
