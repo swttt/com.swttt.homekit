@@ -114,12 +114,12 @@ class HomekitApp extends Homey.App {
       console.log('Found socket: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSocket(device, api));
     }
-    else if (device.class === 'fan' && 'onoff' in capabilities) {
-      console.log('Found fan: ' + device.name)
+    else if ((device.class === 'fan' || device.class === 'heater') && 'onoff' in capabilities) {
+      console.log('Found fan/heater: ' + device.name)
       bridge.addBridgedAccessory(homekit.createFan(device, api));
     }
-    else if (device.class === 'other' && 'onoff' in capabilities) {
-      console.log('Found other with onoff: ' + device.name)
+    else if (['amplifier', 'coffeemachine', 'kettle', 'tv', 'other'].includes(device.class) && 'onoff' in capabilities) {
+      console.log('Found class with onoff: ' + device.name)
       bridge.addBridgedAccessory(homekit.createSwitch(device, api));
     }
     else if ('button' in capabilities) {
@@ -143,7 +143,7 @@ class HomekitApp extends Homey.App {
       bridge.addBridgedAccessory(homekit.createSensor(device, api, capabilities));
     }
     else {
-      console.log('No matching class found for: ' + device.name, device.state)
+      console.log(`No matching class found for: ${ device.name } of class ${ device.class }, state =`, device.state);
     }
 
     device.on('$delete', id => {
