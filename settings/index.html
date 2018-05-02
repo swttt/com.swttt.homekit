@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://unpkg.com/vue"></script>
+    <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.0.4/fuse.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.4/css/bulma.min.css" integrity="sha256-cqlVHMFcSR4diUVzW7ot+yIE0EHW0jfNvRG9GVEt8pE=" crossorigin="anonymous"/>
+
+  </head>
+  <body style="overflow-x:hidden;">
+    <div id="app" style="margin-left:15px;margin-right:20px;">
+
+      <div class="tabs is-centered" style="margin-left:-10px;">
+        <ul>
+          <li v-bind:class="isActive('devices')">
+            <a @click="setPage('devices')" data-i18n="tabs.devices">Devices</a>
+          </li>
+          <!--
+          <li v-bind:class="isActive('log')">
+            <a @click="setPage('log')" data-i18n="tabs.log">Log</a>
+          </li>
+          -->
+        </ul>
+      </div>
+      <!-- DEVICES PAGE -->
+      <div class="columns is-multiline" v-if="currentPage == 'devices'">
+        <input v-model="search" class="input" style="margin-left:10px;margin-right:10px;" type="text" placeholder="Filter...">
+        <div class="column is-3" v-for="device in filteredItems">
+          <div class="box">
+            <center>
+              <img :src="device.icon" style="height:30px;width:auto;" :title="'id = ' + device.id + ', class = ' + device.class + ', caps = ' + Object.keys(device.capabilities)"/><br/>
+              <b>{{device.name}}</b><br/>
+              <small>{{device.zone.name}}</small><br/>
+              <a v-if="!isAdded(device)" @click="addDevice(device)"    class="button is-success is-outlined" style="margin:5px;" data-i18n="device.add">Add</a>
+              <a v-if=" isAdded(device)" @click="removeDevice(device)" class="button is-outlined is-danger"  style="margin:5px;" data-i18n="device.delete">Delete</a>
+            </center>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-multiline" style="margin-left:8px;margin-right:2px;" v-if="currentPage == 'log'">
+        <div class="column is-12 box">
+          <table class="table is-striped">
+            <tr v-for="log in reverseLog">
+              <td width="20">{{log.time}}</td>
+              <td>
+                <span v-if="log.type == 'info' || log.type == undefined" class="tag is-info is-rounded is-small">Info</span>
+                <span v-if="log.type == 'success'" class="tag is-success is-rounded is-small">Success</span>
+                <span v-if="log.type == 'error'" class="tag is-danger is-rounded is-small">Error</span>
+                 {{log.string}}
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function onHomeyReady(Homey) {
+      Homey.ready();
+      new Vue({
+        el   : '#app',
+        data : {
+          devices       : {},
+          pairedDevices : {},
+          search        : '',
+          currentPage   : 'devices',
+          log           : []
+        },
+        methods: {
+          getSetting(name) {
+            return new Promise((resolve, reject) => {
+              Homey.get(name, (err, result) => {
+                err ? reject(err) : resolve(result);
+              });
+            });
+          },
+          setSetting(name, value) {
+            return new Promise((resolve, reject) => {
+              Homey.set(name, value, err => {
+                err ? reject(err) : resolve(value);
+              });
+            });
+          },
+          request(method, endpoint, data) {
+            return new Promise((resolve, reject) => {
+              Homey.api(method, endpoint, data, (err, result) => {
+                err ? reject(err) : resolve(result);
+              });
+            }).catch(err => Homey.alert(err));
+          },
+          async getDevices() {
+            let devices  = await this.request('GET', '/devices');
+            this.devices = Object.values(devices).filter(this.filterArray).sort((a, b) => {
+              let aName = a.name.toLowerCase();
+              let bName = b.name.toLowerCase();
+              return (aName < bName) ? -1 : (aName > bName) ? 1 : 0;
+            });
+          },
+          async getLog() {
+            this.log = []; // await this.request('GET', '/log');
+          },
+          async getPairedDevices() {
+            this.pairedDevices = await this.getSetting('pairedDevices');
+          },
+          setPage(page) {
+            this.currentPage = page;
+          },
+          isActive(page) {
+            if (this.currentPage == page) {
+              return 'is-active';
+            } else {
+              return;
+            }
+          },
+          async addDevice(device) {
+            console.log('Add device', device.id, device.name, device.class)
+            await this.request('PUT', '/devices/' + device.id, device);
+            this.pairedDevices[device.id] = true;
+            await this.updatePairedDevices();
+          },
+          async removeDevice(device) {
+            console.log('Remove device', device.id, device.name, device.class)
+            await this.request('DELETE', '/devices/' + device.id, device);
+            console.log(device.name + ' removed from Homekit');
+            this.pairedDevices[device.id] = false;
+            await this.updatePairedDevices();
+          },
+          async updatePairedDevices() {
+            return await this.setSetting('pairedDevices', this.pairedDevices);
+          },
+          isAdded(device) {
+            // Unknown device: add it as paired.
+            if (! (device.id in this.pairedDevices)) {
+              this.pairedDevices[device.id] = true;
+            }
+            return this.pairedDevices[device.id];
+          },
+          filterArray(device) {
+            // This should match the code in `Homey.app.addDevice()`
+            let capabilities = Object.keys(device.capabilities || {}).reduce((acc, val) => {
+              acc[val.split('.')[0]] = true;
+              return acc;
+            }, {});
+            if (device.class === 'light' && 'onoff' in capabilities) {
+              return true;
+            } else if (device.class === 'lock') {
+              return true;
+            } else if (device.class === 'windowcoverings' && 'windowcoverings_state' in capabilities && !('dim' in capabilities)) {
+              return true;
+            } else if (device.class === 'windowcoverings' && 'dim' in capabilities) {
+              return true;
+            } else if (device.class === 'socket' && 'onoff' in capabilities) {
+              return true;
+            } else if ((device.class === 'fan' || device.class === 'heater') && 'onoff' in capabilities) {
+              return true;
+            } else if (['amplifier', 'coffeemachine', 'kettle', 'tv', 'other'].includes(device.class) && 'onoff' in capabilities) {
+              return true;
+            } else if ('button' in capabilities) {
+              return true;
+            } else if (device.class === 'thermostat') {
+              return true;
+            } else if (device.class === 'doorbell' && 'alarm_generic' in capabilities) {
+              return true;
+            } else if ('homealarm_state' in capabilities) {
+              return true;
+            } else if ([ 'sensor', 'other' ].includes(device.class) && ('measure_luminance' in capabilities || 'measure_temperature' in capabilities || 'measure_humidity' in capabilities || 'alarm_motion' in capabilities || 'alarm_water' in capabilities || 'alarm_contact' in capabilities || 'alarm_smoke' in capabilities || 'alarm_co' in capabilities || 'alarm_co2' in capabilities)) {
+              return true;
+            }
+            return false;
+          }
+        },
+        async mounted() {
+          await this.getPairedDevices();
+          await this.getDevices();
+          await this.getLog();
+          Homey.on('log.new', res => {
+            this.log = res;
+          });
+        },
+        computed: {
+          filteredItems() {
+            var options = {
+              keys: [
+                "name", "zone.name", "class"
+              ],
+              shouldSort: true,
+              findAllMatches: true,
+              threshold: 0.6,
+              location: 0,
+              distance: 100,
+              maxPatternLength: 32,
+              minMatchCharLength: 2
+            };
+            var fuse = new Fuse(this.devices, options);
+            if (this.search.length > 2) {
+              return fuse.search(this.search);
+            } else {
+              return this.devices
+            }
+
+          },
+          reverseLog() {
+            return this.log.slice().reverse();
+          }
+        }
+      })
+    }
+  </script>
+</body>
+</html>
