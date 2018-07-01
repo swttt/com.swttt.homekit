@@ -43,6 +43,7 @@ class HomekitApp extends Homey.App {
       console.log('New device found!')
       const device = await api.devices.getDevice({ id });
       this.addDevice(device);
+      Homey.ManagerSettings.set('pairedDevices', this.pairedDevices);
     });
 
     // Start by creating our Bridge which will host all loaded Accessories
