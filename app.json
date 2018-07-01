@@ -1,5 +1,6 @@
 {
   "id": "com.swttt.homekit",
+  "version": "2.1.1",
   "sdk": 2,
   "permissions": [
     "homey:manager:api"
@@ -17,7 +18,6 @@
     "nl": ["homekit", "siri", "iOS"]
   },
   "category": "appliances",
-  "version": "2.1.0",
   "compatibility": ">=1.5.0",
   "author": {
     "name": "Bas Jansen",

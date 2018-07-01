@@ -35,6 +35,9 @@ Any other feature request can be added there as well.
 
 ### Changelog
 
+### 2.1.1 (beta)
+- Trying to fix #82
+
 ### 2.1.0
 - Reintroduced settings page
 - Other small fixes
