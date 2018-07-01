@@ -6,6 +6,7 @@
   },
   "device": {
     "add": "Add",
-    "delete": "Delete"
+    "delete": "Delete",
+    "unknown": "Unknown"
   }
 }
