@@ -1,9 +1,7 @@
 // process.env.DEBUG = '*';
 
 const Homey = require('homey')
-const {
-  HomeyAPI
-} = require('athom-api')
+const { HomeyAPI } = require('athom-api')
 const fs = require('fs');
 const storage = require('node-persist');
 const path = require('path');
