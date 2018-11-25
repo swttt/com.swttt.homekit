@@ -40,7 +40,7 @@ class HomekitApp extends Homey.App {
     // Subscribe to realtime events and set all devices global
     await api.devices.subscribe();
     api.devices.on('device.create', async (id) => {
-      console.log('New device found!')
+      this.log('New device found!')
       const device = await api.devices.getDevice({ id });
       this.addDevice(device);
       Homey.ManagerSettings.set('pairedDevices', this.pairedDevices);
@@ -54,7 +54,7 @@ class HomekitApp extends Homey.App {
 
     // Listen for bridge identification event
     bridge.on('identify', function(paired, callback) {
-      console.log("Homey identify");
+      this.log("Homey identify");
       callback(); // success
     });
 
@@ -88,7 +88,7 @@ class HomekitApp extends Homey.App {
       pincode: "200-20-200",
       category: Accessory.Categories.BRIDGE
     });
-    console.log("Started bridge");
+    this.log("Started bridge");
   }
 
   // On app init
@@ -112,67 +112,67 @@ class HomekitApp extends Homey.App {
 
     let isPaired = false;
     if (device.class === 'light' && 'onoff' in capabilities) {
-      console.log('Found light: ' + device.name)
+      this.log('Found light: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createLight(device, api));
     }
     else if (device.class === 'lock') {
-      console.log('Found lock: ' + device.name)
+      this.log('Found lock: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createLock(device, api));
     }
     else if (device.class === 'windowcoverings' && 'windowcoverings_state' in capabilities && !('dim' in capabilities)) {
-      console.log('Found blinds (state): ' + device.name)
+      this.log('Found blinds (state): ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createStateBlinds(device, api));
     }
     else if (device.class === 'windowcoverings' && 'dim' in capabilities) {
-      console.log('Found blinds (state): ' + device.name)
+      this.log('Found blinds (state): ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createDimBlinds(device, api));
     }
     else if (device.class === 'socket' && 'onoff' in capabilities) {
-      console.log('Found socket: ' + device.name)
+      this.log('Found socket: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createSocket(device, api));
     }
     else if ((device.class === 'fan' || device.class === 'heater') && 'onoff' in capabilities) {
-      console.log('Found fan/heater: ' + device.name)
+      this.log('Found fan/heater: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createFan(device, api));
     }
     else if (['amplifier', 'coffeemachine', 'kettle', 'tv', 'other'].includes(device.class) && 'onoff' in capabilities) {
-      console.log('Found class with onoff: ' + device.name)
+      this.log('Found class with onoff: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createSwitch(device, api));
     }
     else if ('button' in capabilities) {
-      console.log('Found button: ' + device.name)
+      this.log('Found button: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createButton(device, api));
     }
     else if (device.class === 'thermostat') {
-      console.log('Found thermostat: ' + device.name)
+      this.log('Found thermostat: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createThermostat(device, api));
     }
     else if (device.class === 'doorbell' && 'alarm_generic' in capabilities) {
-      console.log('Found doorbell: ' + device.name)
+      this.log('Found doorbell: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createDoorbell(device, api));
     }
     else if ('homealarm_state' in capabilities) {
-      console.log('Found Security system: ' + device.name)
+      this.log('Found Security system: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createSecuritySystem(device, api));
     }
     else if ([ 'sensor', 'other' ].includes(device.class) && ('measure_luminance' in capabilities || 'measure_temperature' in capabilities || 'measure_humidity' in capabilities || 'alarm_motion' in capabilities || 'alarm_water' in capabilities || 'alarm_contact' in capabilities || 'alarm_smoke' in capabilities || 'alarm_co' in capabilities || 'alarm_co2' in capabilities)) {
-      console.log('Found Sensor: ' + device.name)
+      this.log('Found Sensor: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createSensor(device, api, capabilities));
     }
     else {
-      console.log(`No matching class found for: ${ device.name } of class ${ device.class }, state =`, device.state);
+      this.log(`No matching class found for: ${ device.name } of class ${ device.class }, state =`, device.state);
     }
 
     this.pairedDevices[device.id] = isPaired;
@@ -188,7 +188,7 @@ class HomekitApp extends Homey.App {
 
   deleteDevice(device) {
     if (! device) return;
-    console.log(`Deleting device '${ device.name }' (${ device.id }) from HomeKit`);
+    this.log(`Deleting device '${ device.name }' (${ device.id }) from HomeKit`);
     delete this.pairedDevices[device.id];
     Homey.ManagerSettings.set('pairedDevices', this.pairedDevices);
     let acc = bridge.bridgedAccessories.find(r => r.UUID === device.id);
