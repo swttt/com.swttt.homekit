@@ -1,17 +1,16 @@
 // process.env.DEBUG = '*';
 
-const Homey = require('homey')
-const {
-  HomeyAPI
-} = require('athom-api')
-const fs = require('fs');
-const storage = require('node-persist');
-const path = require('path');
-const uuid = require('hap-nodejs').uuid;
-const Bridge = require('hap-nodejs').Bridge;
-const Service = require('hap-nodejs').Service;
+const Homey          = require('homey')
+const { HomeyAPI }   = require('athom-api')
+const fs             = require('fs');
+const storage        = require('node-persist');
+const path           = require('path');
+const uuid           = require('hap-nodejs').uuid;
+const Bridge         = require('hap-nodejs').Bridge;
+const Service        = require('hap-nodejs').Service;
 const Characteristic = require('hap-nodejs').Characteristic;
-const Accessory = require('hap-nodejs').Accessory;
+const Accessory      = require('hap-nodejs').Accessory;
+const delay          = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // Device classes
 const homekit = require('./lib/');
@@ -35,6 +34,7 @@ class HomekitApp extends Homey.App {
 
   // Start server function
   async startingServer() {
+    this.log('starting server');
     const api = this.api;
 
     // Subscribe to realtime events and set all devices global
@@ -97,6 +97,22 @@ class HomekitApp extends Homey.App {
       Homey.ManagerSettings.set('pairedDevices', null);
     }
     this.api = await this.getApi();
+
+    // Wait for devices to settle before starting the server.
+    if (Homey.env.FAST_START !== 'true') {
+      this.log('waiting for devices to settle');
+      let previousDeviceCount = 0;
+      while (true) {
+        let newDeviceCount = Object.keys(await this.getDevices()).length;
+        if (newDeviceCount && newDeviceCount === previousDeviceCount) {
+          this.log(`devices have settled (counted ${ newDeviceCount } in total)`);
+          break;
+        }
+        previousDeviceCount = newDeviceCount;
+        this.log(`devices have not yet settled, waiting for 30 seconds...`);
+        await delay(30000);
+      }
+    }
     this.startingServer();
   }
 
