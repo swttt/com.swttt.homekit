@@ -1,6 +1,6 @@
 {
   "name": "com.swttt.homekit",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Homekit app for Homey",
   "main": "app.js",
   "scripts": {

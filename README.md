@@ -35,6 +35,9 @@ Any other feature request can be added there as well.
 
 ### Changelog
 
+### 2.1.3 (beta)
+- Delay start of Homekit server until device count has settled (#93)
+
 ### 2.1.2 (beta)
 - Trying to fix #82
 
