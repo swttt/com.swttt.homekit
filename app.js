@@ -17,6 +17,7 @@ const homekit = require('./lib/');
 let bridge;
 
 storage.initSync();
+//storage.clearSync();
 
 class HomekitApp extends Homey.App {
   // Get API control function
@@ -40,7 +41,7 @@ class HomekitApp extends Homey.App {
     // Subscribe to realtime events and set all devices global
     await api.devices.subscribe();
     api.devices.on('device.create', async (id) => {
-      this.log('New device found!')
+	  this.log('New device found!');
       const device = await api.devices.getDevice({ id });
       this.addDevice(device);
       Homey.ManagerSettings.set('pairedDevices', this.pairedDevices);
@@ -50,13 +51,17 @@ class HomekitApp extends Homey.App {
     bridge = new Bridge('Homey', uuid.generate("Homey"));
     bridge.getService(Service.AccessoryInformation)
       .setCharacteristic(Characteristic.Manufacturer, 'Athom')
-      .setCharacteristic(Characteristic.Model, 'Homey');
+      .setCharacteristic(Characteristic.Model, 'Homey')
+	  .setCharacteristic(Characteristic.FirmwareRevision, '2.0');
 
     // Listen for bridge identification event
     bridge.on('identify', function(paired, callback) {
-      this.log("Homey identify");
+      console.log('Homey identify');
       callback(); // success
     });
+	
+//    Homey.ManagerSettings.set('pairedDevices', {});
+	
 
     // Retrieve a list of all devices, and a list of devices that should (not) be paired.
     let allDevices           = await this.getDevices();
@@ -121,7 +126,7 @@ class HomekitApp extends Homey.App {
     if (! device) return;
 
     let api          = this.api;
-    let capabilities = Object.keys(device.capabilities || {}).reduce((acc, val) => {
+    let capabilities = Object.values(device.capabilities || {}).reduce((acc, val) => {
       acc[val.split('.')[0]] = true;
       return acc;
     }, {});
@@ -185,10 +190,10 @@ class HomekitApp extends Homey.App {
     else if ([ 'sensor', 'other' ].includes(device.class) && ('measure_luminance' in capabilities || 'measure_temperature' in capabilities || 'measure_humidity' in capabilities || 'measure_pressure' in capabilities || 'alarm_motion' in capabilities || 'alarm_water' in capabilities || 'alarm_contact' in capabilities || 'alarm_smoke' in capabilities || 'alarm_co' in capabilities || 'alarm_co2' in capabilities)) {
       this.log('Found Sensor: ' + device.name)
       isPaired = true;
-      bridge.addBridgedAccessory(homekit.createSensor(device, api, capabilities));
+      bridge.addBridgedAccessory(homekit.createSensor(device, api));
     }
     else {
-      this.log(`No matching class found for: ${ device.name } of class ${ device.class }, state =`, device.state);
+      this.log(`No matching class found for: ${ device.name } of class ${ device.class }, state =`, device.capabilitiesObj);
     }
 
     this.pairedDevices[device.id] = isPaired;
