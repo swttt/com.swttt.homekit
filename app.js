@@ -60,9 +60,6 @@ class HomekitApp extends Homey.App {
       callback(); // success
     });
 	
-//    Homey.ManagerSettings.set('pairedDevices', {});
-	
-
     // Retrieve a list of all devices, and a list of devices that should (not) be paired.
     let allDevices           = await this.getDevices();
     let pairedDevicesSetting = Homey.ManagerSettings.get('pairedDevices') || {};
@@ -193,7 +190,7 @@ class HomekitApp extends Homey.App {
       bridge.addBridgedAccessory(homekit.createSensor(device, api));
     }
     else {
-      this.log(`No matching class found for: ${ device.name } of class ${ device.class }, state =`, device.capabilitiesObj);
+      this.log('No matching class found for: ${ device.name } of class ${ device.class }');
     }
 
     this.pairedDevices[device.id] = isPaired;

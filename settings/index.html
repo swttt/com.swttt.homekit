@@ -31,7 +31,6 @@
         <div class="column is-3" v-for="device in filteredItems">
           <div class="box">
             <center>
-              <img :src="device.icon" style="height:30px;width:auto;" :title="'id = ' + device.id + ', class = ' + device.class + ', caps = ' + Object.keys(device.capabilities)"/><br/>
               <b>{{device.name}}</b><br/>
               <small>{{device.zone.name}}</small><br/>
               <a v-if     ="canAdd(device)"    @click="addDevice(device)"    class="button is-outlined is-success" style="margin:5px;" data-i18n="device.add">Add</a>
@@ -149,7 +148,7 @@
           },
           filterArray(device) {
             // This should match the code in `Homey.app.addDevice()`
-            let capabilities = Object.keys(device.capabilities || {}).reduce((acc, val) => {
+            let capabilities = Object.values(device.capabilities || {}).reduce((acc, val) => {
               acc[val.split('.')[0]] = true;
               return acc;
             }, {});
