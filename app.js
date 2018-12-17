@@ -17,7 +17,6 @@ const homekit = require('./lib/');
 let bridge;
 
 storage.initSync();
-//storage.clearSync();
 
 class HomekitApp extends Homey.App {
   // Get API control function
@@ -132,7 +131,7 @@ class HomekitApp extends Homey.App {
     if (device.class === 'light' && 'onoff' in capabilities) {
       this.log('Found light: ' + device.name)
       isPaired = true;
-      bridge.addBridgedAccessory(homekit.createLight(device, api));
+      bridge.addBridgedAccessory(homekit.createLight(device, api, capabilities));
     }
     else if (device.class === 'lock') {
       this.log('Found lock: ' + device.name)
@@ -157,7 +156,7 @@ class HomekitApp extends Homey.App {
     else if ((device.class === 'fan' || device.class === 'heater') && 'onoff' in capabilities) {
       this.log('Found fan/heater: ' + device.name)
       isPaired = true;
-      bridge.addBridgedAccessory(homekit.createFan(device, api));
+      bridge.addBridgedAccessory(homekit.createFan(device, api, capabilities));
     }
     else if (['amplifier', 'coffeemachine', 'kettle', 'tv', 'other'].includes(device.class) && 'onoff' in capabilities) {
       this.log('Found class with onoff: ' + device.name)
@@ -172,7 +171,7 @@ class HomekitApp extends Homey.App {
     else if (device.class === 'thermostat') {
       this.log('Found thermostat: ' + device.name)
       isPaired = true;
-      bridge.addBridgedAccessory(homekit.createThermostat(device, api));
+      bridge.addBridgedAccessory(homekit.createThermostat(device, api, capabilities));
     }
     else if (device.class === 'doorbell' && 'alarm_generic' in capabilities) {
       this.log('Found doorbell: ' + device.name)
@@ -182,12 +181,12 @@ class HomekitApp extends Homey.App {
     else if ('homealarm_state' in capabilities) {
       this.log('Found Security system: ' + device.name)
       isPaired = true;
-      bridge.addBridgedAccessory(homekit.createSecuritySystem(device, api));
+      bridge.addBridgedAccessory(homekit.createSecuritySystem(device, api, capabilities));
     }
     else if ([ 'sensor', 'other' ].includes(device.class) && ('measure_luminance' in capabilities || 'measure_temperature' in capabilities || 'measure_humidity' in capabilities || 'measure_pressure' in capabilities || 'alarm_motion' in capabilities || 'alarm_water' in capabilities || 'alarm_contact' in capabilities || 'alarm_smoke' in capabilities || 'alarm_co' in capabilities || 'alarm_co2' in capabilities)) {
       this.log('Found Sensor: ' + device.name)
       isPaired = true;
-      bridge.addBridgedAccessory(homekit.createSensor(device, api));
+      bridge.addBridgedAccessory(homekit.createSensor(device, api, capabilities));
     }
     else {
       this.log('No matching class found for: ${ device.name } of class ${ device.class }');
