@@ -40,7 +40,7 @@ class HomekitApp extends Homey.App {
     // Subscribe to realtime events and set all devices global
     await api.devices.subscribe();
     api.devices.on('device.create', async (id) => {
-      this.log('New device found!')
+	  this.log('New device found!');
       const device = await api.devices.getDevice({ id });
       this.addDevice(device);
       Homey.ManagerSettings.set('pairedDevices', this.pairedDevices);
@@ -50,14 +50,15 @@ class HomekitApp extends Homey.App {
     bridge = new Bridge('Homey', uuid.generate("Homey"));
     bridge.getService(Service.AccessoryInformation)
       .setCharacteristic(Characteristic.Manufacturer, 'Athom')
-      .setCharacteristic(Characteristic.Model, 'Homey');
+      .setCharacteristic(Characteristic.Model, 'Homey')
+	  .setCharacteristic(Characteristic.FirmwareRevision, '2.0');
 
     // Listen for bridge identification event
     bridge.on('identify', function(paired, callback) {
-      this.log("Homey identify");
+      console.log('Homey identify');
       callback(); // success
     });
-
+	
     // Retrieve a list of all devices, and a list of devices that should (not) be paired.
     let allDevices           = await this.getDevices();
     let pairedDevicesSetting = Homey.ManagerSettings.get('pairedDevices') || {};
@@ -121,7 +122,8 @@ class HomekitApp extends Homey.App {
     if (! device) return;
 
     let api          = this.api;
-    let capabilities = Object.keys(device.capabilities || {}).reduce((acc, val) => {
+	
+    let capabilities = device.capabilities.reduce((acc, val) => {
       acc[val.split('.')[0]] = true;
       return acc;
     }, {});
@@ -130,7 +132,7 @@ class HomekitApp extends Homey.App {
     if (device.class === 'light' && 'onoff' in capabilities) {
       this.log('Found light: ' + device.name)
       isPaired = true;
-      bridge.addBridgedAccessory(homekit.createLight(device, api));
+      bridge.addBridgedAccessory(homekit.createLight(device, api, capabilities));
     }
     else if (device.class === 'lock') {
       this.log('Found lock: ' + device.name)
@@ -155,7 +157,7 @@ class HomekitApp extends Homey.App {
     else if ((device.class === 'fan' || device.class === 'heater') && 'onoff' in capabilities) {
       this.log('Found fan/heater: ' + device.name)
       isPaired = true;
-      bridge.addBridgedAccessory(homekit.createFan(device, api));
+      bridge.addBridgedAccessory(homekit.createFan(device, api, capabilities));
     }
     else if (['amplifier', 'coffeemachine', 'kettle', 'tv', 'other'].includes(device.class) && 'onoff' in capabilities) {
       this.log('Found class with onoff: ' + device.name)
@@ -170,7 +172,7 @@ class HomekitApp extends Homey.App {
     else if (device.class === 'thermostat') {
       this.log('Found thermostat: ' + device.name)
       isPaired = true;
-      bridge.addBridgedAccessory(homekit.createThermostat(device, api));
+      bridge.addBridgedAccessory(homekit.createThermostat(device, api, capabilities));
     }
     else if (device.class === 'doorbell' && 'alarm_generic' in capabilities) {
       this.log('Found doorbell: ' + device.name)
@@ -180,7 +182,7 @@ class HomekitApp extends Homey.App {
     else if ('homealarm_state' in capabilities) {
       this.log('Found Security system: ' + device.name)
       isPaired = true;
-      bridge.addBridgedAccessory(homekit.createSecuritySystem(device, api));
+      bridge.addBridgedAccessory(homekit.createSecuritySystem(device, api, capabilities));
     }
     else if ([ 'sensor', 'other' ].includes(device.class) && ('measure_luminance' in capabilities || 'measure_temperature' in capabilities || 'measure_humidity' in capabilities || 'measure_pressure' in capabilities || 'alarm_motion' in capabilities || 'alarm_water' in capabilities || 'alarm_contact' in capabilities || 'alarm_smoke' in capabilities || 'alarm_co' in capabilities || 'alarm_co2' in capabilities)) {
       this.log('Found Sensor: ' + device.name)
@@ -188,7 +190,7 @@ class HomekitApp extends Homey.App {
       bridge.addBridgedAccessory(homekit.createSensor(device, api, capabilities));
     }
     else {
-      this.log(`No matching class found for: ${ device.name } of class ${ device.class }, state =`, device.state);
+      this.log('No matching class found for: ${ device.name } of class ${ device.class }');
     }
 
     this.pairedDevices[device.id] = isPaired;
