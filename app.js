@@ -122,7 +122,8 @@ class HomekitApp extends Homey.App {
     if (! device) return;
 
     let api          = this.api;
-    let capabilities = Object.values(device.capabilities || {}).reduce((acc, val) => {
+	
+    let capabilities = device.capabilities.reduce((acc, val) => {
       acc[val.split('.')[0]] = true;
       return acc;
     }, {});
