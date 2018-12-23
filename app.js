@@ -41,7 +41,7 @@ class HomekitApp extends Homey.App {
     await api.devices.subscribe();
     api.devices.on('device.create', async (id) => {
 	  this.log('New device found!');
-      const device = await api.devices.getDevice({ id });
+      const device = await api.devices.getDevice( id );
       this.addDevice(device);
       Homey.ManagerSettings.set('pairedDevices', this.pairedDevices);
     });
