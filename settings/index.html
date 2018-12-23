@@ -16,31 +16,42 @@
           <li v-bind:class="isActive('devices')">
             <a @click="setPage('devices')" data-i18n="tabs.devices">Devices</a>
           </li>
-          <!--
           <li v-bind:class="isActive('log')">
             <a @click="setPage('log')" data-i18n="tabs.log">Log</a>
+          </li>
+          <li v-bind:class="isActive('settings')">
+            <a @click="setPage('settings')" data-i18n="tabs.settings">Settings</a>
           </li>
           -->
         </ul>
       </div>
-      <!-- DEVICES PAGE -->
+      
+	  <!-- DEVICES PAGE -->
       <div class="columns is-multiline" v-if="currentPage == 'devices'">
         <div class='column is-full'>
           <input v-model="search" @keyup='onKeyUp' class="input" type="text" placeholder="Filter...">
         </div>
         <div class="column is-3" v-for="device in filteredItems">
           <div class="box">
-            <center>
-              <b>{{device.name}}</b><br/>
-              <small>{{device.zone.name}}</small><br/>
-              <a v-if     ="canAdd(device)"    @click="addDevice(device)"    class="button is-outlined is-success" style="margin:5px;" data-i18n="device.add">Add</a>
-              <a v-else-if="canRemove(device)" @click="removeDevice(device)" class="button is-outlined is-danger"  style="margin:5px;" data-i18n="device.delete">Delete</a>
-              <a v-else                        @click=""                     class="button is-outlined is-warning" style="margin:5px;" data-i18n="device.unknown">Unknown</a>
-            </center>
+            <table>
+              <tr>
+                <td width="20">
+					<img :src="device.iconObj.url" style="height:50px;width:auto;" :title="'id = ' + device.id + ', class = ' + device.class"/> 				</td>
+                <td>
+	               <center>
+	                 <b>{{device.name}}</b><br/>
+	                 <a v-if     ="canAdd(device)"    @click="addDevice(device)"    class="button is-outlined is-success" style="margin:5px;" data-i18n="device.add">Add</a>
+	                 <a v-else-if="canRemove(device)" @click="removeDevice(device)" class="button is-outlined is-danger"  style="margin:5px;" data-i18n="device.delete">Delete</a>
+	                 <a v-else                        @click=""                     class="button is-outlined is-warning" style="margin:5px;" data-i18n="device.unknown">Unknown</a>
+	               </center>
+                </td>
+              </tr>
+            </table>
           </div>
         </div>
       </div>
 
+	  <!-- LOG PAGE -->
       <div class="columns is-multiline" style="margin-left:8px;margin-right:2px;" v-if="currentPage == 'log'">
         <div class="column is-12 box">
           <table class="table is-striped">
@@ -54,6 +65,13 @@
               </td>
             </tr>
           </table>
+        </div>
+      </div>
+	  
+	  <!-- SETTINGS PAGE -->
+      <div class="columns is-multiline" style="margin-left:8px;margin-right:2px;" v-if="currentPage == 'settings'">
+        <div class='column is-full'>
+           <a @click="clearStorage()" data-i18n="app.clearStorage">Clear homekit storage and start over</a>
         </div>
       </div>
 
@@ -136,6 +154,10 @@
             console.log(device.name + ' removed from Homekit');
             this.pairedDevices[device.id] = false;
             await this.updatePairedDevices();
+          },
+          async clearStorage() {
+            console.log('Clearing Storage')
+            //this.storage.clearSync();
           },
           async updatePairedDevices() {
             return await this.setSetting('pairedDevices', this.pairedDevices);
