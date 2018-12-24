@@ -221,6 +221,10 @@ class HomekitApp extends Homey.App {
     let allDevices = await this.getDevices();
     return Object.values(allDevices).find(device => device.id === id);
   }
+
+  clearStorage() {
+    storage.clearSync();
+  }
 }
 
 module.exports = HomekitApp;

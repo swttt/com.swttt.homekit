@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <script src="https://unpkg.com/vue"></script>
-    <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+    <script src="/homey.js" data-origin="settings"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.0.4/fuse.min.js"></script>
-
+    <script src='homey-settings-mock.js'></script>
+    <script src='mock-setup.js'></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.4/css/bulma.min.css" integrity="sha256-cqlVHMFcSR4diUVzW7ot+yIE0EHW0jfNvRG9GVEt8pE=" crossorigin="anonymous"/>
-
   </head>
-  <body style="overflow-x:hidden;">
-    <div id="app" style="margin-left:15px;margin-right:20px;">
+  <body>
+    <div id='app'>
 
-      <div class="tabs is-centered" style="margin-left:-10px;">
+      <div class="tabs is-centered">
         <ul>
           <li v-bind:class="isActive('devices')">
             <a @click="setPage('devices')" data-i18n="tabs.devices">Devices</a>
@@ -22,56 +23,56 @@
           <li v-bind:class="isActive('settings')">
             <a @click="setPage('settings')" data-i18n="tabs.settings">Settings</a>
           </li>
-          -->
         </ul>
       </div>
-      
-	  <!-- DEVICES PAGE -->
-      <div class="columns is-multiline" v-if="currentPage == 'devices'">
-        <div class='column is-full'>
-          <input v-model="search" @keyup='onKeyUp' class="input" type="text" placeholder="Filter...">
-        </div>
-        <div class="column is-3" v-for="device in filteredItems">
-          <div class="box">
-            <table>
-              <tr>
-                <td width="20">
-					<img :src="device.iconObj.url" style="height:50px;width:auto;" :title="'id = ' + device.id + ', class = ' + device.class"/> 				</td>
-                <td>
-	               <center>
-	                 <b>{{device.name}}</b><br/>
-	                 <a v-if     ="canAdd(device)"    @click="addDevice(device)"    class="button is-outlined is-success" style="margin:5px;" data-i18n="device.add">Add</a>
-	                 <a v-else-if="canRemove(device)" @click="removeDevice(device)" class="button is-outlined is-danger"  style="margin:5px;" data-i18n="device.delete">Delete</a>
-	                 <a v-else                        @click=""                     class="button is-outlined is-warning" style="margin:5px;" data-i18n="device.unknown">Unknown</a>
-	               </center>
-                </td>
-              </tr>
-            </table>
+
+      <!-- DEVICES PAGE -->
+      <div v-if="currentPage == 'devices'">
+        <input v-model='search' @keyup='onKeyUp' class='input' type='text' placeholder='Filter...'>
+        <div v-for='device in filteredItems' class='card' style='margin: 0.75rem 0'>
+          <div class='card-content'>
+            <div class='media'>
+              <div class='media-left'>
+                <figure class='image is-48x48'>
+                  <img :src="device.iconObj.url" style="height:48px" :title="'id = ' + device.id + ', class = ' + device.class"/>
+                </figure>
+              </div>
+              <div class='media-content'>
+                <div class='has-text-centered title    is-4'>{{ device.name }}</div>
+                <div class='has-text-centered subtitle is-6' style='margin-top: 0.5rem'>
+                  <a v-if     ="canAdd(device)"    @click="addDevice(device)"    class="button is-outlined is-small is-success" data-i18n="device.add">Add</a>
+                  <a v-else-if="canRemove(device)" @click="removeDevice(device)" class="button is-outlined is-small is-danger"  data-i18n="device.delete">Delete</a>
+                  <a v-else                        @click=""                     class="button is-outlined is-small is-warning" data-i18n="device.unknown">Unknown</a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-	  <!-- LOG PAGE -->
-      <div class="columns is-multiline" style="margin-left:8px;margin-right:2px;" v-if="currentPage == 'log'">
+      <!-- LOG PAGE -->
+      <div class="columns" v-if="currentPage == 'log'">
         <div class="column is-12 box">
           <table class="table is-striped">
             <tr v-for="log in reverseLog">
-              <td width="20">{{log.time}}</td>
+              <td>{{log.time}}</td>
               <td>
                 <span v-if="log.type == 'info' || log.type == undefined" class="tag is-info is-rounded is-small">Info</span>
                 <span v-if="log.type == 'success'" class="tag is-success is-rounded is-small">Success</span>
                 <span v-if="log.type == 'error'" class="tag is-danger is-rounded is-small">Error</span>
-                 {{log.string}}
+              </td>
+              <td>
+                {{ log.string }}
               </td>
             </tr>
           </table>
         </div>
       </div>
-	  
-	  <!-- SETTINGS PAGE -->
-      <div class="columns is-multiline" style="margin-left:8px;margin-right:2px;" v-if="currentPage == 'settings'">
-        <div class='column is-full'>
-           <a @click="clearStorage()" data-i18n="app.clearStorage">Clear homekit storage and start over</a>
+
+      <!-- SETTINGS PAGE -->
+      <div class="columns" v-if="currentPage == 'settings'">
+        <div class='column box has-text-centered'>
+          <a @click="clearStorage()" class='button is-danger' data-i18n="app.clearStorage">Clear HomeKit storage and start over.</a>
         </div>
       </div>
 
@@ -81,6 +82,7 @@
 
   <script>
     function onHomeyReady(Homey) {
+      console.log('ready');
       Homey.ready();
       new Vue({
         el   : '#app',
@@ -156,8 +158,11 @@
             await this.updatePairedDevices();
           },
           async clearStorage() {
-            console.log('Clearing Storage')
-            //this.storage.clearSync();
+            Homey.confirm('Are you sure!?', async (err, response) => {
+              if (response === true) {
+                await this.request('GET', '/clear-storage', { value : response });
+              }
+            });
           },
           async updatePairedDevices() {
             return await this.setSetting('pairedDevices', this.pairedDevices);
@@ -170,7 +175,7 @@
           },
           filterArray(device) {
             // This should match the code in `Homey.app.addDevice()`
-            let capabilities = Object.values(device.capabilities || {}).reduce((acc, val) => {
+            let capabilities = (device.capabilities || []).reduce((acc, val) => {
               acc[val.split('.')[0]] = true;
               return acc;
             }, {});
