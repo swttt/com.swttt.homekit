@@ -37,4 +37,16 @@ module.exports = [
       }
     }
   },
+  {
+    method : 'GET',
+    path   : '/clear-storage',
+    fn     : async (args, callback) => {
+      try {
+        Homey.app.clearStorage();
+        return callback(null, { value : true });
+      } catch(err) {
+        return callback(err);
+      }
+    }
+  },
 ];
