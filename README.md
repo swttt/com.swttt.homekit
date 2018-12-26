@@ -33,9 +33,30 @@ Any other feature request can be added there as well.
 
 ---
 
-### Changelog
+### Homey firmware v1.5 and v2
+
+Starting from app version 3.0.0, this app can only run on Homey's v2 firmware. The reason for this is that this firmware has introduced backward incompatible changes that don't work on older versions of the firmware.
+
+Some, but not all, additional features that will be introduced from app version 3.0.0 will be backported to a separate `v1.5` branch. This branch can be manually installed on Homey using [`athom-cli`](https://www.npmjs.com/package/athom-cli).
+
+Assuming that you have `athom-cli` and `git` installed (and working already):
+
+```
+$ git clone --single-branch --branch v1.5 https://github.com/swttt/com.swttt.homekit
+$ cd com.swttt.homekit
+$ athom app install
+```
+
+## Changelog
+
+### 3.0.0 (beta)
+
+- Homey v2 firmware support
+- Changes to settings pages
+- Option to clear persistent storage to resolve issues with Homey not being found by iOS
 
 ### 2.1.3 (beta)
+
 - Delay start of Homekit server until device count has settled (#93)
 
 ### 2.1.2 (beta)
