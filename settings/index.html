@@ -34,7 +34,7 @@
             <div class='media'>
               <div class='media-left'>
                 <figure class='image is-48x48'>
-                  <img :src="device.iconObj.url" style="height:48px" :title="'id = ' + device.id + ', class = ' + device.class"/>
+                  <img :src="device.icon" style="height:48px" :title="'id = ' + device.id + ', class = ' + device.class"/>
                 </figure>
               </div>
               <div class='media-content'>
@@ -72,7 +72,7 @@
       <!-- SETTINGS PAGE -->
       <div class="columns" v-if="currentPage == 'settings'">
         <div class='column box has-text-centered'>
-          <a @click="clearStorage()" class='button is-danger' data-i18n="app.clearStorage">Clear HomeKit storage and start over.</a>
+          <a @click="clearStorage()" class='button is-danger' data-i18n="app.clearStorage">Clear HomeKit storage.</a>
         </div>
       </div>
     </div>
@@ -157,7 +157,7 @@
             await this.updatePairedDevices();
           },
           async clearStorage() {
-            Homey.confirm('Are you sure!?', async (err, response) => {
+            Homey.confirm('Are you sure!?', 'info', async (err, response) => {
               if (response === true) {
                 await this.request('GET', '/clear-storage', { value : response });
               }

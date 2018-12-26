@@ -14,10 +14,10 @@ void function() {
       path:   '/devices',
       fn:     function(args, cb) {
         cb(null, {
-          1 : { name: 'Lamp Woonkamer',  id : 1, class : 'light',  iconObj : { url : ICON }, capabilities : [ 'onoff', 'dim' ] },
-          2 : { name: 'Lamp Overloop',   id : 2, class : 'light',  iconObj : { url : ICON }, capabilities : [ 'onoff', 'dim' ] },
-          3 : { name: 'Schakelaar Kast', id : 3, class : 'socket', iconObj : { url : ICON }, capabilities : [ 'onoff' ] },
-          4 : { name: 'Bewegingsmelder', id : 4, class : 'sensor', iconObj : { url : ICON }, capabilities : [ 'alarm_motion' ] },
+          1 : { name: 'Lamp Woonkamer',  id : 1, class : 'light',  icon : ICON, capabilities : { 'onoff' : true, 'dim' : true } },
+          2 : { name: 'Lamp Overloop',   id : 2, class : 'light',  icon : ICON, capabilities : { 'onoff' : true, 'dim' :true } },
+          3 : { name: 'Schakelaar Kast', id : 3, class : 'socket', icon : ICON, capabilities : { 'onoff' : true } },
+          4 : { name: 'Bewegingsmelder', id : 4, class : 'sensor', icon : ICON, capabilities : { 'alarm_motion' : true } },
         });
       }
     },

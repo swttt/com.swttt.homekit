@@ -2,7 +2,11 @@
 
   "tabs": {
     "devices": "Apparaten",
-    "log": "Log"
+    "log": "Log",
+    "settings": "Instellingen"
+  },
+  "app" : {
+    "clearStorage": "Maak HomeKit opslag leeg."
   },
   "device": {
     "add": "Toevoegen",
