@@ -6,7 +6,10 @@
     "settings": "Instellingen"
   },
   "app" : {
-    "clearStorage": "Maak HomeKit opslag leeg."
+    "clearStorage": {
+      "explanation" : "Als je problemen hebt met het toevoegen van Homey aan HomeKit, bijvoorbeeld als HomeKit het \"Homey\" apparaat niet kan vinden, kun je proberen de HomeKit opslag leeg te maken.",
+      "button" : "Maak HomeKit opslag leeg en begin opnieuw."
+    }
   },
   "device": {
     "add": "Toevoegen",

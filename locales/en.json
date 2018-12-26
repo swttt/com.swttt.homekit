@@ -6,7 +6,10 @@
     "settings": "Settings"
   },
   "app" : {
-    "clearStorage": "Clear HomeKit storage."
+    "clearStorage": {
+      "explanation" : "If you have problems trying to add Homey to HomeKit, for instance, if HomeKit can't find the \"Homey\" accessory, you can try and clear the HomeKit storage.",
+      "button" : "Clear HomeKit storage and start over."
+    }
   },
   "device": {
     "add": "Add",
