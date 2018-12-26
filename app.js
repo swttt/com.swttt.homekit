@@ -150,7 +150,7 @@ class HomekitApp extends Homey.App {
     else if (device.class === 'socket' && 'onoff' in capabilities) {
       this.log('Found socket: ' + device.name)
       isPaired = true;
-      bridge.addBridgedAccessory(homekit.createSocket(device, api));
+      bridge.addBridgedAccessory(homekit.createSocket(device, api, capabilities));
     }
     else if ((device.class === 'fan' || device.class === 'heater') && 'onoff' in capabilities) {
       this.log('Found fan/heater: ' + device.name)
