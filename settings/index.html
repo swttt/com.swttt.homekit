@@ -29,8 +29,8 @@
       <!-- DEVICES PAGE -->
       <div v-if="currentPage == 'devices'">
         <input v-model='search' @keyup='onKeyUp' class='input' type='text' placeholder='Filter...'>
-        <div class='columns is-tablet' style='margin: 0.75rem 0'>
-          <div v-for='device in filteredItems' class='column is-half-tablet is-one-third-desktop is-one-quarter-widescreen'>
+        <div class='columns is-multiline is-tablet' style='margin: 0.75rem 0'>
+          <div v-for='device in filteredItems' class='column is-half-tablet is-one-third-desktop'>
             <div class='card'>
               <div class='card-content'>
                 <div class='media'>
