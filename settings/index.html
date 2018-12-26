@@ -29,20 +29,24 @@
       <!-- DEVICES PAGE -->
       <div v-if="currentPage == 'devices'">
         <input v-model='search' @keyup='onKeyUp' class='input' type='text' placeholder='Filter...'>
-        <div v-for='device in filteredItems' class='card' style='margin: 0.75rem 0'>
-          <div class='card-content'>
-            <div class='media'>
-              <div class='media-left'>
-                <figure class='image is-48x48'>
-                  <img :src="device.iconObj.url" style="height:48px" :title="'id = ' + device.id + ', class = ' + device.class"/>
-                </figure>
-              </div>
-              <div class='media-content'>
-                <div class='has-text-centered title    is-4'>{{ device.name }}</div>
-                <div class='has-text-centered subtitle is-6' style='margin-top: 0.5rem'>
-                  <a v-if     ="canAdd(device)"    @click="addDevice(device)"    class="button is-outlined is-small is-success" data-i18n="device.add">Add</a>
-                  <a v-else-if="canRemove(device)" @click="removeDevice(device)" class="button is-outlined is-small is-danger"  data-i18n="device.delete">Delete</a>
-                  <a v-else                        @click=""                     class="button is-outlined is-small is-warning" data-i18n="device.unknown">Unknown</a>
+        <div class='columns is-tablet' style='margin: 0.75rem 0'>
+          <div v-for='device in filteredItems' class='column is-half-tablet is-one-third-desktop is-one-quarter-widescreen'>
+            <div class='card'>
+              <div class='card-content'>
+                <div class='media'>
+                  <div class='media-left'>
+                    <figure class='image is-48x48'>
+                      <img :src="device.iconObj.url" style="height:48px" :title="'id = ' + device.id + ', class = ' + device.class"/>
+                    </figure>
+                  </div>
+                  <div class='media-content'>
+                    <div class='has-text-centered title    is-4'>{{ device.name }}</div>
+                    <div class='has-text-centered subtitle is-6' style='margin-top: 0.5rem'>
+                      <a v-if     ="canAdd(device)"    @click="addDevice(device)"    class="button is-outlined is-small is-success" data-i18n="device.add">Add</a>
+                      <a v-else-if="canRemove(device)" @click="removeDevice(device)" class="button is-outlined is-small is-danger"  data-i18n="device.delete">Delete</a>
+                      <a v-else                        @click=""                     class="button is-outlined is-small is-warning" data-i18n="device.unknown">Unknown</a>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -70,9 +74,17 @@
       </div>
 
       <!-- SETTINGS PAGE -->
-      <div class="columns" v-if="currentPage == 'settings'">
-        <div class='column box has-text-centered'>
-          <a @click="clearStorage()" class='button is-danger' data-i18n="app.clearStorage">Clear HomeKit storage and start over.</a>
+      <div class='columns is-mobile' v-if="currentPage == 'settings'">
+        <div class='column is-half-tablet is-offset-one-quarter-tablet is-one-third-desktop is-offset-one-third-desktop'>
+          <div class='box has-text-centered'>
+            <p>
+              If you have problems trying to add Homey to HomeKit, for instance, if HomeKit can't find the "Homey" accessory,
+              you can try and clear the HomeKit storage.
+            </p>
+            <p style='margin-top: 0.75rem'>
+              <a @click="clearStorage()" class='button is-danger' data-i18n="app.clearStorage">Clear HomeKit storage and start over.</a>
+            </p>
+          </div>
         </div>
       </div>
 
