@@ -162,7 +162,7 @@ class HomekitApp extends Homey.App {
     else if (['amplifier', 'coffeemachine', 'kettle', 'tv', 'other'].includes(device.class) && 'onoff' in capabilities) {
       this.log('Found class with onoff: ' + device.name)
       isPaired = true;
-      bridge.addBridgedAccessory(homekit.createSwitch(device, api));
+      bridge.addBridgedAccessory(homekit.createSwitch(device, api, capabilities));
     }
     else if ('button' in capabilities) {
       this.log('Found button: ' + device.name)
