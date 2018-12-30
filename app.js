@@ -37,15 +37,6 @@ class HomekitApp extends Homey.App {
     this.log('starting server');
     const api = this.api;
 
-    // Subscribe to realtime events and set all devices global
-    await api.devices.subscribe();
-    api.devices.on('device.create', async (id) => {
-	  this.log('New device found!');
-      const device = await api.devices.getDevice( id );
-      this.addDevice(device);
-      Homey.ManagerSettings.set('pairedDevices', this.pairedDevices);
-    });
-
     // Start by creating our Bridge which will host all loaded Accessories
     bridge = new Bridge('Homey', uuid.generate("Homey"));
     bridge.getService(Service.AccessoryInformation)
@@ -60,6 +51,7 @@ class HomekitApp extends Homey.App {
     });
 	
     // Retrieve a list of all devices, and a list of devices that should (not) be paired.
+    let knownDevices         = {};
     let allDevices           = await this.getDevices();
     let pairedDevicesSetting = Homey.ManagerSettings.get('pairedDevices') || {};
     this.pairedDevices       = {};
@@ -77,10 +69,22 @@ class HomekitApp extends Homey.App {
         this.pairedDevices[device.id] = false;
         this.log(`Not adding '${ device.name }' (shouldn't be paired)`);
       }
+      knownDevices[id] = true;
     }
 
     // Update settings
     Homey.ManagerSettings.set('pairedDevices', this.pairedDevices);
+
+    // Subscribe to realtime events and set all devices global
+    await api.devices.subscribe();
+	api.devices.on('device.update', async ({ id }) => {
+      if (id in knownDevices) return;
+      knownDevices[id] = true;
+      this.log('New device found!');
+      const device =  await api.devices.getDevice({ id });
+      this.addDevice(device);
+      Homey.ManagerSettings.set('pairedDevices', this.pairedDevices);
+    });
 
     // Publish bridge
     bridge.publish({
@@ -162,7 +166,7 @@ class HomekitApp extends Homey.App {
     else if (['amplifier', 'coffeemachine', 'kettle', 'tv', 'other'].includes(device.class) && 'onoff' in capabilities) {
       this.log('Found class with onoff: ' + device.name)
       isPaired = true;
-      bridge.addBridgedAccessory(homekit.createSwitch(device, api, capabilities));
+      bridge.addBridgedAccessory(homekit.createSwitch(device, api));
     }
     else if ('button' in capabilities) {
       this.log('Found button: ' + device.name)
