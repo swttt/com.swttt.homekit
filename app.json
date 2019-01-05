@@ -1,5 +1,5 @@
 {
-  "id": "com.swttt.homekit",
+  "id": "com.swttt.homekit.beta",
   "version": "3.0.0",
   "sdk": 2,
   "permissions": [
@@ -18,7 +18,7 @@
     "nl": ["homekit", "siri", "iOS"]
   },
   "category": "appliances",
-  "compatibility": ">=2.0.0",
+  "compatibility": ">=1.5",
   "author": {
     "name": "Bas Jansen",
     "email": "b@sjansen.email"
