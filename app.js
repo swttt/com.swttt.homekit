@@ -145,15 +145,19 @@ module.exports = class HomekitApp extends Homey.App {
     for (const charObj of homekitCharacteristics) {
       // Add a new characteristic if this service doesn't already have it.
       let characteristic = service.getCharacteristic(charObj.class) || accessory.addCharacteristic(charObj.class);
-
-      if (charObj.set) characteristic.on('set', charObj.set);
-      if (charObj.get) characteristic.on('get', charObj.get);
+      let context        = { device, capabilities, log : this.log.bind(this) };
+      if (charObj.set) {
+        characteristic.on('set', charObj.set.bind(context));
+      }
+      if (charObj.get) {
+        characteristic.on('get', charObj.get.bind(context));
+      }
     }
 
     // Set device info
     accessory
       .getService(Service.AccessoryInformation)
-      .setCharacteristic(Characteristic.Manufacturer, device.driver ? device.driver.owner_name : device.driverUri)
+      .setCharacteristic(Characteristic.Manufacturer, device.driver ? device.driver.owner_name : device.driverUri.replace(/^.*:/, ''))
       .setCharacteristic(Characteristic.Model, device.name + '(' + device.zone.name + ')')
       .setCharacteristic(Characteristic.SerialNumber, device.id)
       .on('identify', (paired, callback) => {
