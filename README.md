@@ -51,17 +51,21 @@ $ athom app install
 
 ## Changelog
 
-### 3.0.0 (beta)
+### 3.0.1
+
+- Fixed an issue with the settings page not being shown
+
+### 3.0.0
 
 - Homey v2 firmware support
 - Changes to settings pages
 - Option to clear persistent storage to resolve issues with Homey not being found by iOS
 
-### 2.1.3 (beta)
+### 2.1.3
 
 - Delay start of Homekit server until device count has settled (#93)
 
-### 2.1.2 (beta)
+### 2.1.2
 - Trying to fix #82
 
 ### 2.1.0
