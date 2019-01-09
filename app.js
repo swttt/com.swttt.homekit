@@ -77,7 +77,8 @@ class HomekitApp extends Homey.App {
 
     // Subscribe to realtime events and set all devices global
     await api.devices.subscribe();
-	api.devices.on('device.update', async ({ id }) => {
+    api.devices.on('device.update', async ({ id, ready }) => {
+      if (! ready) return;
       if (id in knownDevices) return;
       knownDevices[id] = true;
       this.log('New device found!');
