@@ -9,7 +9,6 @@
   "author": "Bas Jansen",
   "license": "ISC",
   "dependencies": {
-    "athom-api": "^2.1.140",
     "bonjour": "github:abedinpour/bonjour#2845ce7606ecb58ce361726ade9ce71bcd9909c5",
     "hap-nodejs": "^0.4.41",
     "lodash.debounce": "^4.0.8",
