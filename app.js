@@ -103,7 +103,7 @@ module.exports = class HomekitApp extends Homey.App {
     let capabilities = Object.keys(capabilitiesObj).reduce((acc, val) => {
       acc[val.split('.')[0]] = true;
       return acc;
-    }, {});
+   }, {});
 
     const homekitCharacteristics = Object.keys(capabilities).map(cap => CAPABILITY_TO_CHARACTERISTIC[cap]).filter(v => !!v);
     if (! homekitCharacteristics.length) {
@@ -141,16 +141,24 @@ module.exports = class HomekitApp extends Homey.App {
       return;
     }
 
+    // Add a Name characteristic.
+    service.getCharacteristic(Characteristic.Name).on('get', cb => cb(null, device.name));
+
     // Add autodetected characteristics.
-    for (const charObj of homekitCharacteristics) {
-      // Add a new characteristic if this service doesn't already have it.
-      let characteristic = service.getCharacteristic(charObj.class) || accessory.addCharacteristic(charObj.class);
-      let context        = { device, capabilities, log : this.log.bind(this) };
-      if (charObj.set) {
-        characteristic.on('set', charObj.set.bind(context));
+    for (let characteristics of homekitCharacteristics) {
+      if (! Array.isArray(characteristics)) {
+        characteristics = [ characteristics ];
       }
-      if (charObj.get) {
-        characteristic.on('get', charObj.get.bind(context));
+      for (const obj of characteristics) {
+        // Add a new characteristic if this service doesn't already have it.
+        let characteristic = service.getCharacteristic(obj.class) || accessory.addCharacteristic(obj.class);
+        let context        = { device, capabilities, log : this.log.bind(this) };
+        if (obj.set) {
+          characteristic.on('set', obj.set.bind(context));
+        }
+        if (obj.get) {
+          characteristic.on('get', obj.get.bind(context));
+        }
       }
     }
 
@@ -166,6 +174,7 @@ module.exports = class HomekitApp extends Homey.App {
       });
 
     // TODO: check if all required characteristics have been filled
+    this.log(`[${ device.name }] chars =`, service.characteristics.map(char => [ service.displayName, char.displayName, char.listenerCount('get') ]));
 
     // TODO: realtime events.
     device.on('$delete', id => {
