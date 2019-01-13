@@ -7,11 +7,7 @@ const { CLASS_TO_SERVICE, CAPABILITY_TO_CHARACTERISTIC, CAPABILITY_TO_SERVICE } 
 
 // Load the correct version of the `athom-api` module.
 const isFirmwareV2 = Homey.version && Homey.version.startsWith('2');
-if (isFirmwareV2) {
-  var { HomeyAPI }   = require('athom-api@v2')
-} else {
-  var { HomeyAPI }   = require('athom-api@v1')
-}
+const { HomeyAPI } = require(isFirmwareV2 ? 'athom-api@v2' : 'athom-api@v1')
 
 // Helper function: promisified timeouts.
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -24,8 +20,14 @@ module.exports = class HomekitApp extends Homey.App {
   async onInit() {
     // Force-reset settings.
     if (Homey.env.RESET_SETTINGS) {
+      Homey.ManagerSettings.set('exposedDevices', null);
       Homey.ManagerSettings.set('pairedDevices', null);
     }
+
+    // Load list of devices that should be exposed through HomeKit
+    this.exposedDevices = Homey.ManagerSettings.get('exposedDevices') ||
+                          Homey.ManagerSettings.get('pairedDevices')  ||  // backward compatibility
+                          {};
 
     // Retrieve Homey API reference.
     this.api = await HomeyAPI.forCurrentHomey();
@@ -67,7 +69,7 @@ module.exports = class HomekitApp extends Homey.App {
       .getService(Service.AccessoryInformation)
       .setCharacteristic(Characteristic.Manufacturer,     'Athom')
       .setCharacteristic(Characteristic.Model,            'Homey')
-      .setCharacteristic(Characteristic.FirmwareRevision, '2.0');
+      .setCharacteristic(Characteristic.FirmwareRevision, isFirmwareV2 ? '2.0' : '1.5');
 
     // Listen for bridge identification event.
     bridge.on('identify', (paired, callback) => {
@@ -77,9 +79,22 @@ module.exports = class HomekitApp extends Homey.App {
 
     // Retrieve a list of all devices and add them to the bridge.
     for (const device of Object.values( await this.getDevices() )) {
-      // TODO: check if device should be exposed.
-      this.addDevice(device);
+      if ('ready' in device && ! device.ready) continue;
+      // Check if device should be exposed.
+      if (this.shouldBeExposed(device.id)) {
+        this.addDevice(device);
+      }
     }
+
+    // Watch for device creates to discover new devices.
+    this.api.devices.on('device.create', async arg => {
+      const id     = typeof arg === 'string' ? arg : arg.id;
+      const device = isFirmwareV2 ? ( await this.waitForDevice(id) ) : ( await this.api.devices.getDevice({ id }) );
+
+      if (device) {
+        this.addDevice(device);
+      }
+    });
 
     // Publish bridge
     bridge.publish({
@@ -91,9 +106,24 @@ module.exports = class HomekitApp extends Homey.App {
     this.log('Started bridge');
   }
 
+  async waitForDevice(id, attempts = 30, delay = 1000) {
+    let device;
+    while (--attempts) {
+      device = await this.api.devices.getDevice({ id });
+      if (device.ready) {
+        return device;
+      }
+      await delay(1000);
+    }
+    this.log(`[${ device.name }] device failed to become ready after ${ attempts * (delay / 1000) } seconds.`);
+    return null;
+  }
+
+
   async addDevice(device) {
     const { api, bridge } = this;
 
+    this.log(`[${ device.name }] adding new device`);
     if (! device) {
       return;
     }
@@ -149,16 +179,12 @@ module.exports = class HomekitApp extends Homey.App {
       if (! Array.isArray(characteristics)) {
         characteristics = [ characteristics ];
       }
-      for (const obj of characteristics) {
+      for (const proxy of characteristics) {
         // Add a new characteristic if this service doesn't already have it.
-        let characteristic = service.getCharacteristic(obj.class) || accessory.addCharacteristic(obj.class);
-        let context        = { device, capabilities, log : this.log.bind(this) };
-        if (obj.set) {
-          characteristic.on('set', obj.set.bind(context));
-        }
-        if (obj.get) {
-          characteristic.on('get', obj.get.bind(context));
-        }
+        let characteristic = service.getCharacteristic(proxy) || service.addCharacteristic(proxy);
+
+        // Set event handler context.
+        characteristic.setHomeyContext({ device, capabilities, log : this.log.bind(this) });
       }
     }
 
@@ -184,6 +210,7 @@ module.exports = class HomekitApp extends Homey.App {
     // Add device to bridge.
     try {
       bridge.addBridgedAccessory(accessory);
+      this.setExposed(device.id, true);
     } catch(e) {
       this.log(`[${ device.name }] couldn't add accessory to bridge`);
       this.log(e);
@@ -199,9 +226,9 @@ module.exports = class HomekitApp extends Homey.App {
     if (! device) {
       return;
     }
-    this.log(`Deleting device '${ device.name }' (${ device.id }) from HomeKit`);
-    delete this.pairedDevices[device.id];
-    Homey.ManagerSettings.set('pairedDevices', this.pairedDevices);
+    this.log(`[${ device.name }] deleting device from HomeKit`);
+    delete this.exposedDevices[device.id];
+    Homey.ManagerSettings.set('exposedDevices', this.exposedDevices);
     let acc = bridge.bridgedAccessories.find(r => r.UUID === device.id);
     acc && bridge.removeBridgedAccessory(acc);
   }
@@ -213,6 +240,15 @@ module.exports = class HomekitApp extends Homey.App {
   async findDeviceById(id) {
     let allDevices = await this.getDevices();
     return Object.values(allDevices).find(device => device.id === id);
+  }
+
+  shouldBeExposed(id) {
+    return !( id in this.exposedDevices ) || this.exposedDevices[id];
+  }
+
+  setExposed(id, isExposed = true) {
+    this.exposedDevices[id] = isExposed;
+    Homey.ManagerSettings.set('exposedDevices', this.exposedDevices);
   }
 
   clearStorage() {
