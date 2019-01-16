@@ -51,6 +51,10 @@ $ athom app install
 
 ## Changelog
 
+### 3.0.3
+
+- Also check `device.virtualClass` during device discovery.
+
 ### 3.0.2
 
 - Fix to prevent issues due to Athom's implementation hijacking our TCP port
