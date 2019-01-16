@@ -134,7 +134,7 @@ class HomekitApp extends Homey.App {
     }, {});
 
     let isPaired = false;
-    if (device.class === 'light' && 'onoff' in capabilities) {
+    if ([device.class, device.virtualClass].includes('light') && 'onoff' in capabilities) {
       this.log('Found light: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createLight(device, api, capabilities));
