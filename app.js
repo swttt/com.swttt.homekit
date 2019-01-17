@@ -1,9 +1,17 @@
-const fs                                                                        = require('fs');
-const storage                                                                   = require('node-persist');
-const path                                                                      = require('path');
-const Homey                                                                     = require('homey')
-const { uuid, Bridge, Service, Characteristic, Accessory }                      = require('hap-nodejs');
-const { CLASS_TO_SERVICE, CAPABILITY_TO_CHARACTERISTIC, CAPABILITY_TO_SERVICE } = require('./lib/mappings');
+const fs                = require('fs');
+const storage           = require('node-persist');
+const path              = require('path');
+const Homey             = require('homey')
+const {
+  uuid,
+  Bridge,
+  Service,
+  Characteristic,
+  Accessory }           = require('hap-nodejs');
+const {
+  ClassToService,
+  CapabilityToCharacteristic,
+  CapabilityToService } = require('./lib/mappings');
 
 // Load the correct version of the `athom-api` module.
 const isFirmwareV2 = Homey.version && Homey.version.startsWith('2');
@@ -128,65 +136,8 @@ module.exports = class HomekitApp extends Homey.App {
       return;
     }
 
-    // Map Homey capabilities to HomeKit characteristics.
-    const capabilitiesObj = Array.isArray(device.capabilities) ? device.capabilitiesObj : device.capabilities;
-    let capabilities = Object.keys(capabilitiesObj).reduce((acc, val) => {
-      acc[val.split('.')[0]] = true;
-      return acc;
-   }, {});
-
-    const homekitCharacteristics = Object.keys(capabilities).map(cap => CAPABILITY_TO_CHARACTERISTIC[cap]).filter(v => !!v);
-    if (! homekitCharacteristics.length) {
-      this.log(`[${ device.name }] couldn't map any of the device capabilities to HomeKit characteristics`);
-      return;
-    }
-
     // Create HomeKit accessory.
     const accessory = new Accessory(device.name, device.id);
-
-    // Map Homey device class to HomeKit service.
-    let homekitService = CLASS_TO_SERVICE[device.class];
-    if (! homekitService) {
-      this.log(`[${ device.name }] couldn't map device class '${ device.class }' to HomeKit service`);
-      // Try to pick a reasonable device class based on device capabilities.
-      for (const [ capability, service ] of Object.entries(CAPABILITY_TO_SERVICE)) {
-        if (capability in capabilities) {
-          this.log(`[${ device.name }] was able to pick a reasonable fallback based on the '${ capability }' capability`);
-          homekitService = service;
-          break;
-        }
-      }
-      if (! homekitService) {
-        this.log(`[${ device.name }] unable to pick a reasonable fallback`);
-        return;
-      }
-    }
-
-    // Add service.
-    try {
-      var service = accessory.addService(homekitService, device.name);
-    } catch(e) {
-      this.log(`[${ device.name }] couldn't add service to accessory`);
-      this.log(e);
-      return;
-    }
-
-    // Add a Name characteristic.
-    service.getCharacteristic(Characteristic.Name).on('get', cb => cb(null, device.name));
-
-    // Add autodetected characteristics.
-    for (let characteristics of homekitCharacteristics) {
-      if (! Array.isArray(characteristics)) {
-        characteristics = [ characteristics ];
-      }
-      for (const proxy of characteristics) {
-        // Add a new characteristic if this service doesn't already have it.
-        let characteristic = service.getCharacteristic(proxy) || service.addCharacteristic(proxy);
-
-        // Set event handler context.
-        characteristic.setHomeyContext({ device, capabilities, log : this.log.bind(this) });
-      }
-    }
 
     // Set device info
     accessory
@@ -198,6 +149,53 @@ module.exports = class HomekitApp extends Homey.App {
         this.log(device.name + ' identify');
         callback();
       });
+
+    // Generate a list of unique capabilities for this device.
+    const capabilitiesObj = Array.isArray(device.capabilities) ? device.capabilitiesObj : device.capabilities;
+    let capabilities = Object.keys(capabilitiesObj).reduce((acc, val) => {
+      acc[val.split('.')[0]] = true;
+      return acc;
+    }, {});
+
+    // Map Homey device class to HomeKit service.
+    const homekitService = ClassToService.lookup([ device.virtualClass, device.class ], capabilities);
+    if (! homekitService) {
+      return this.log(`[${ device.name }] couldn't map device class '${ device.class }'  to HomeKit service`);
+    }
+
+    // Add service to accessory.
+    try {
+      var service = accessory.addService(homekitService, device.name);
+    } catch(e) {
+      this.log(`[${ device.name }] couldn't add service to accessory`);
+      this.log(e);
+      return;
+    }
+
+    // Add a Name characteristic.
+    service.getCharacteristic(Characteristic.Name).on('get', cb => cb(null, device.name));
+
+    // Map Homey capabilities to HomeKit characteristics.
+    const homekitCharacteristics = CapabilityToCharacteristic.lookup(capabilities);
+    if (! homekitCharacteristics.length) {
+      this.log(`[${ device.name }] couldn't map any of the device capabilities to HomeKit characteristics`);
+      return;
+    }
+
+    // Add autodetected characteristics.
+    for (let characteristics of homekitCharacteristics) {
+      if (! Array.isArray(characteristics)) {
+        characteristics = [ characteristics ];
+      }
+      for (const klass of characteristics) {
+        // Add a new characteristic if this service doesn't already have it.
+        const characteristic = service.getCharacteristic(klass) || service.addCharacteristic(klass);
+        const ctx            = { device, capabilities, log : this.log.bind(this) };
+
+        characteristic.on('get', klass.events.get.bind(ctx));
+        characteristic.on('set', klass.events.set.bind(ctx));
+      }
+    }
 
     // TODO: check if all required characteristics have been filled
     this.log(`[${ device.name }] chars =`, service.characteristics.map(char => [ service.displayName, char.displayName, char.listenerCount('get') ]));
