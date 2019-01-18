@@ -127,7 +127,6 @@ module.exports = class HomekitApp extends Homey.App {
     return null;
   }
 
-
   async addDevice(device) {
     const { api, bridge } = this;
 
@@ -198,7 +197,7 @@ module.exports = class HomekitApp extends Homey.App {
     }
 
     // TODO: check if all required characteristics have been filled
-    this.log(`[${ device.name }] chars =`, service.characteristics.map(char => [ service.displayName, char.displayName, char.listenerCount('get') ]));
+    // this.log(`[${ device.name }] chars =`, service.characteristics.map(char => [ service.displayName, char.displayName, char.listenerCount('get') ]));
 
     // TODO: realtime events.
     device.on('$delete', id => {
