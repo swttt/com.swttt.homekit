@@ -139,7 +139,7 @@ class HomekitApp extends Homey.App {
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createLight(device, api, capabilities));
     }
-    else if (device.class === 'lock' && 'lock' in capabilities) {
+    else if (device.class === 'lock' && 'locked' in capabilities) {
       this.log('Found lock: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createLock(device, api));

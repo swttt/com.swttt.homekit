@@ -193,7 +193,7 @@
             }, {});
             if (device.class === 'light' && 'onoff' in capabilities) {
               return true;
-            } else if (device.class === 'lock' && 'lock' in capabilities) {
+            } else if (device.class === 'lock' && 'locked' in capabilities) {
               return true;
             } else if (device.class === 'windowcoverings' && 'windowcoverings_state' in capabilities && !('dim' in capabilities)) {
               return true;
