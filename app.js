@@ -11,7 +11,8 @@ const {
 const {
   ClassToService,
   CapabilityToCharacteristic,
-  CapabilityToService } = require('./lib/mappings');
+  CapabilityToService,
+  GetCapabilityValue }  = require('./lib/mappings');
 
 // Load the correct version of the `athom-api` module.
 const isFirmwareV2 = Homey.version && Homey.version.startsWith('2');
@@ -19,6 +20,17 @@ const { HomeyAPI } = require(isFirmwareV2 ? 'athom-api@v2' : 'athom-api@v1')
 
 // Helper function: promisified timeouts.
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+// Throttle timer.
+const isThrottled = (function() {
+  let throttleTimer = 0;
+  return (timeout = 500) => {
+    const now = Date.now();
+    if (now - throttleTimer < timeout) return true;
+    throttleTimer = now;
+    return false;
+  };
+})();
 
 // Initialize persistent storage (used by `hap-nodejs`).
 storage.initSync();
@@ -130,10 +142,12 @@ module.exports = class HomekitApp extends Homey.App {
   async addDevice(device) {
     const { api, bridge } = this;
 
-    this.log(`[${ device.name }] adding new device`);
     if (! device) {
       return;
     }
+
+    const log = this.log.bind(this, `[${ device.name }]`);
+    log('adding new device');
 
     // Create HomeKit accessory.
     const accessory = new Accessory(device.name, device.id);
@@ -145,7 +159,7 @@ module.exports = class HomekitApp extends Homey.App {
       .setCharacteristic(Characteristic.Model, device.name + '(' + device.zone.name + ')')
       .setCharacteristic(Characteristic.SerialNumber, device.id)
       .on('identify', (paired, callback) => {
-        this.log(device.name + ' identify');
+        log('identify');
         callback();
       });
 
@@ -159,15 +173,15 @@ module.exports = class HomekitApp extends Homey.App {
     // Map Homey device class to HomeKit service.
     const homekitService = ClassToService.lookup([ device.virtualClass, device.class ], capabilities);
     if (! homekitService) {
-      return this.log(`[${ device.name }] couldn't map device class '${ device.class }'  to HomeKit service`);
+      return log(`couldn't map device class '${ device.class }' to HomeKit service`);
     }
 
     // Add service to accessory.
     try {
       var service = accessory.addService(homekitService, device.name);
     } catch(e) {
-      this.log(`[${ device.name }] couldn't add service to accessory`);
-      this.log(e);
+      log(`couldn't add service to accessory`);
+      log(e);
       return;
     }
 
@@ -175,31 +189,69 @@ module.exports = class HomekitApp extends Homey.App {
     service.getCharacteristic(Characteristic.Name).on('get', cb => cb(null, device.name));
 
     // Map Homey capabilities to HomeKit characteristics.
-    const homekitCharacteristics = CapabilityToCharacteristic.lookup(capabilities);
-    if (! homekitCharacteristics.length) {
-      this.log(`[${ device.name }] couldn't map any of the device capabilities to HomeKit characteristics`);
-      return;
+    const mappedCapabilities = CapabilityToCharacteristic.lookup(capabilities);
+    if (! mappedCapabilities.length) {
+      return log(`couldn't map any of the device capabilities to HomeKit characteristics`);
     }
 
     // Add autodetected characteristics.
-    for (let characteristics of homekitCharacteristics) {
-      if (! Array.isArray(characteristics)) {
-        characteristics = [ characteristics ];
-      }
-      for (const klass of characteristics) {
-        // Add a new characteristic if this service doesn't already have it.
-        const characteristic = service.getCharacteristic(klass) || service.addCharacteristic(klass);
-        const ctx            = { device, capabilities, log : this.log.bind(this) };
+    const onStateChange = {};
+    for (let [ capability, klass, { fromHomey = v => v, toHomey = v => v } = {} ] of mappedCapabilities) {
+      const characteristic = service.getCharacteristic(klass) || service.addCharacteristic(klass);
 
-        characteristic.on('get', klass.events.get.bind(ctx));
-        characteristic.on('set', klass.events.set.bind(ctx));
+      // Add event handlers.
+      characteristic.on('get', cb => {
+        try {
+          return cb(null, fromHomey(GetCapabilityValue(device, capability)));
+        } catch(e) {
+          log(`failed to get value for '${ capability }'`);
+          log(e);
+          return cb(e);
+        }
+      }).on('set', (value, cb) => {
+        if (isThrottled()) return cb();
+        value = toHomey(value);
+        device.setCapabilityValue(capability, value);
+        log(`setting '${ capability }' to '${ value }'`);
+        return cb();
+      });
+
+      // Register for capability changes (firmware v2)
+      if (isFirmwareV2) {
+        device.makeCapabilityInstance(capability, function onStateChange(value) {
+          log(`value of '${ capability }' changed to ${ value }`);
+          try {
+            characteristic.updateValue(fromHomey(GetCapabilityValue(device, capability)));
+          } catch(e) {
+            log(`failed to get value for '${ capability }'`);
+            log(e);
+          }
+        });
+      } else {
+        // Or register an onStateChange handler (v1)
+        if (! onStateChange[capability]) {
+          onStateChange[capability] = [];
+        }
+        onStateChange[capability].push({ characteristic, fromHomey });
       }
     }
 
     // TODO: check if all required characteristics have been filled
     // this.log(`[${ device.name }] chars =`, service.characteristics.map(char => [ service.displayName, char.displayName, char.listenerCount('get') ]));
 
-    // TODO: realtime events.
+    // Register for update events (firmware v1 only).
+    if (! isFirmwareV2) {
+      device.on('$state', (state, capability) => {
+        const value = state[capability];
+        log(`value of '${ capability }' changed to ${ value }`);
+        for (const { characteristic, fromHomey } of (onStateChange[capability] || [])) {
+          log(` - updating ${ characteristic.displayName } to ${ fromHomey(value) }`);
+          characteristic.updateValue(fromHomey(value));
+        }
+      });
+    }
+
+    // Register for device deletions.
     device.on('$delete', id => {
       this.deleteDevice(device);
     });
@@ -209,8 +261,8 @@ module.exports = class HomekitApp extends Homey.App {
       bridge.addBridgedAccessory(accessory);
       this.setExposed(device.id, true);
     } catch(e) {
-      this.log(`[${ device.name }] couldn't add accessory to bridge`);
-      this.log(e);
+      log(`couldn't add accessory to bridge`);
+      log(e);
     }
   }
 
