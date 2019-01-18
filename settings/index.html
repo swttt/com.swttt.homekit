@@ -193,7 +193,7 @@
             }, {});
             if (device.class === 'light' && 'onoff' in capabilities) {
               return true;
-            } else if (device.class === 'lock') {
+            } else if (device.class === 'lock' && 'locked' in capabilities) {
               return true;
             } else if (device.class === 'windowcoverings' && 'windowcoverings_state' in capabilities && !('dim' in capabilities)) {
               return true;
@@ -207,7 +207,7 @@
               return true;
             } else if ('button' in capabilities) {
               return true;
-            } else if (device.class === 'thermostat') {
+            } else if (device.class === 'thermostat' && 'measure_temperature' in capabilities && 'target_temperature' in capabilities) {
               return true;
             } else if (device.class === 'doorbell' && 'alarm_generic' in capabilities) {
               return true;

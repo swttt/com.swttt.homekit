@@ -139,7 +139,7 @@ class HomekitApp extends Homey.App {
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createLight(device, api, capabilities));
     }
-    else if (device.class === 'lock') {
+    else if (device.class === 'lock' && 'locked' in capabilities) {
       this.log('Found lock: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createLock(device, api));
@@ -174,7 +174,7 @@ class HomekitApp extends Homey.App {
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createButton(device, api));
     }
-    else if (device.class === 'thermostat') {
+    else if (device.class === 'thermostat' && 'measure_temperature' in capabilities && 'target_temperature' in capabilities) {
       this.log('Found thermostat: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createThermostat(device, api, capabilities));
