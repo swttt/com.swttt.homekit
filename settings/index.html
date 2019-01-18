@@ -99,11 +99,11 @@
       new Vue({
         el   : '#app',
         data : {
-          devices       : {},
-          pairedDevices : {},
-          search        : '',
-          currentPage   : 'devices',
-          log           : []
+          devices:        {},
+          exposedDevices: {},
+          search:         '',
+          currentPage:    'devices',
+          log:            []
         },
         methods: {
           onKeyUp(ev) {
@@ -143,8 +143,8 @@
           async getLog() {
             this.log = []; // await this.request('GET', '/log');
           },
-          async getPairedDevices() {
-            this.pairedDevices = await this.getSetting('pairedDevices');
+          async getExposedDevices() {
+            this.exposedDevices = await this.getSetting('exposedDevices');
           },
           setPage(page) {
             this.currentPage = page;
@@ -159,15 +159,15 @@
           async addDevice(device) {
             console.log('Add device', device.id, device.name, device.class)
             await this.request('PUT', '/devices/' + device.id, device);
-            this.pairedDevices[device.id] = true;
-            await this.updatePairedDevices();
+            this.exposedDevices[device.id] = true;
+            await this.updateExposedDevices();
           },
           async removeDevice(device) {
             console.log('Remove device', device.id, device.name, device.class)
             await this.request('DELETE', '/devices/' + device.id, device);
             console.log(device.name + ' removed from Homekit');
-            this.pairedDevices[device.id] = false;
-            await this.updatePairedDevices();
+            this.exposedDevices[device.id] = false;
+            await this.updateExposedDevices();
           },
           async clearStorage() {
             Homey.confirm('Are you sure!?', async (err, response) => {
@@ -176,14 +176,14 @@
               }
             });
           },
-          async updatePairedDevices() {
-            return await this.setSetting('pairedDevices', this.pairedDevices);
+          async updateExposedDevices() {
+            return await this.setSetting('exposedDevices', this.exposedDevices);
           },
           canAdd(device) {
-            return this.pairedDevices[device.id] === false;
+            return this.exposedDevices[device.id] === false;
           },
           canRemove(device) {
-            return this.pairedDevices[device.id] === true;
+            return this.exposedDevices[device.id] === true;
           },
           filterArray(device) {
             // This should match the code in `Homey.app.addDevice()`
@@ -220,7 +220,7 @@
           }
         },
         async mounted() {
-          await this.getPairedDevices();
+          await this.getExposedDevices();
           await this.getDevices();
           await this.getLog();
           Homey.on('log.new', res => {
