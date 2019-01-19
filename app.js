@@ -221,7 +221,9 @@ module.exports = class HomekitApp extends Homey.App {
         device.makeCapabilityInstance(capability, function onStateChange(value) {
           log(`value of '${ capability }' changed to ${ value }`);
           try {
-            characteristic.updateValue(fromHomey(GetCapabilityValue(device, capability)));
+            const newValue = fromHomey(GetCapabilityValue(device, capability));
+            characteristic.updateValue(newValue);
+            log(` - changed value of '${ characteristic.displayName }' to ${ newValue }`);
           } catch(e) {
             log(`failed to get value for '${ capability }'`);
             log(e);
