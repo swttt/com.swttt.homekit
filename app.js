@@ -164,6 +164,11 @@ class HomekitApp extends Homey.App {
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createFan(device, api, capabilities));
     }
+    else if (device.class === 'amplifier' && 'onoff' in capabilities && 'volume_set' in capabilities) {
+      this.log('Found amplifier: ' + device.name)
+      isPaired = true;
+      bridge.addBridgedAccessory(homekit.createAmplifier(device, api));
+    }
     else if (['amplifier', 'coffeemachine', 'kettle', 'tv', 'other'].includes(device.class) && 'onoff' in capabilities) {
       this.log('Found class with onoff: ' + device.name)
       isPaired = true;
