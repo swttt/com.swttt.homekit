@@ -51,6 +51,10 @@ $ athom app install
 
 ## Changelog
 
+### 3.0.4
+
+- Better check on required capabilities for devices to prevent crashes
+
 ### 3.0.3
 
 - Also check `device.virtualClass` during device discovery.
