@@ -47,8 +47,6 @@ $ cd com.swttt.homekit
 $ athom app install
 ```
 
-**NB**: you cannot run the (experimental) built-in HomeKit implementation from v2 and HomeyKit at the same time.
-
 ## Changelog
 
 ### 3.0.4
