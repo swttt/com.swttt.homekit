@@ -1,6 +1,6 @@
 {
   "id": "com.swttt.homekit",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "sdk": 2,
   "permissions": [
     "homey:manager:api"

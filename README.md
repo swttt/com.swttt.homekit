@@ -49,6 +49,12 @@ $ athom app install
 
 ## Changelog
 
+### 3.0.5
+
+- Prevent non-existent capabilities from being accessed/used
+- Cleanups
+- Debouncing dim so it doesn't glitch as much
+
 ### 3.0.4
 
 - Better check on required capabilities for devices to prevent crashes
