@@ -49,6 +49,10 @@ $ athom app install
 
 ## Changelog
 
+### 3.0.6
+
+- Wait longer after a reboot for devices to settle to prevent iOS from not recognizing devices anymore
+
 ### 3.0.5
 
 - Prevent non-existent capabilities from being accessed/used
