@@ -10,6 +10,7 @@ const Bridge         = require('hap-nodejs').Bridge;
 const Service        = require('hap-nodejs').Service;
 const Characteristic = require('hap-nodejs').Characteristic;
 const Accessory      = require('hap-nodejs').Accessory;
+const debounce       = require('lodash.debounce');
 const delay          = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // Device classes
@@ -80,6 +81,13 @@ class HomekitApp extends Homey.App {
 
     // Update settings
     Homey.ManagerSettings.set('pairedDevices', this.pairedDevices);
+
+    // Watch for setting changes
+    Homey.ManagerSettings.on('set', debounce(key => {
+      if (key === 'pairedDevices') {
+        this.pairedDevices = Homey.ManagerSettings.get('pairedDevices');
+      }
+    }, 100));
 
     // Publish bridge
     bridge.publish({
