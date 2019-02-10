@@ -17,9 +17,11 @@
           <li v-bind:class="isActive('devices')">
             <a @click="setPage('devices')" data-i18n="tabs.devices">Devices</a>
           </li>
+          <!--
           <li v-bind:class="isActive('log')">
             <a @click="setPage('log')" data-i18n="tabs.log">Log</a>
           </li>
+          -->
           <li v-bind:class="isActive('settings')">
             <a @click="setPage('settings')" data-i18n="tabs.settings">Settings</a>
           </li>
@@ -222,10 +224,12 @@
         async mounted() {
           await this.getPairedDevices();
           await this.getDevices();
+          /*
           await this.getLog();
           Homey.on('log.new', res => {
             this.log = res;
           });
+          */
           Homey.on('settings.set', async (key) => {
             if (key === 'pairedDevices') {
               await this.getDevices();
