@@ -186,7 +186,7 @@ class HomekitApp extends Homey.App {
       this.log('Found doorbell: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createDoorbell(device, api));
-    } else if ('homealarm_state' in capabilities) {
+    } else if ('homealarm_state' in capabilities || device.class === 'homealarm' || device.virtualClass === 'homealarm') {
       this.log('Found Security system: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createSecuritySystem(device, api, capabilities));
