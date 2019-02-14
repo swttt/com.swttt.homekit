@@ -80,6 +80,27 @@
         <div class='column is-half-tablet is-offset-one-quarter-tablet is-one-third-desktop is-offset-one-third-desktop'>
           <div class='box has-text-centered'>
             <p>
+              If you run into the problem that your Homekit configuration (rooms, automations) gets lost after a reboot,
+              you can configure a "settle time" here. By default, this is 2 minutes, which may not be enough for Homey's
+              with lots of devices and/or apps installed.
+            </p>
+            <div class='columns is-mobile' style='margin-top: 0.75rem; align-items: center'>
+              <div class='column is-three-quarters-mobile' style='text-align: right'>
+                <i>
+                  Settle Time (seconds):
+                </i>
+              </div>
+              <div class='column'>
+                <div class='field'>
+                  <p class='control'>
+                    <input class='input' type='number' v-model='settleTime'>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class='box has-text-centered'>
+            <p>
               If you have problems trying to add Homey to HomeKit, for instance, if HomeKit can't find the "Homey" accessory,
               you can try and clear the HomeKit storage.
             </p>
@@ -105,6 +126,7 @@
           pairedDevices : {},
           search        : '',
           currentPage   : 'devices',
+          settleTime    : 120,
           log           : []
         },
         methods: {
@@ -141,6 +163,9 @@
               let bName = b.name.toLowerCase();
               return (aName < bName) ? -1 : (aName > bName) ? 1 : 0;
             });
+          },
+          async getSettings() {
+            this.settleTime = await this.getSetting('settleTime') || 120;
           },
           async getLog() {
             this.log = []; // await this.request('GET', '/log');
@@ -224,6 +249,7 @@
         async mounted() {
           await this.getPairedDevices();
           await this.getDevices();
+          await this.getSettings();
           /*
           await this.getLog();
           Homey.on('log.new', res => {
@@ -258,6 +284,11 @@
           },
           reverseLog() {
             return this.log.slice().reverse();
+          }
+        },
+        watch: {
+          async settleTime(value) {
+            await this.setSetting('settleTime', value);
           }
         }
       })

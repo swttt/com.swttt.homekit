@@ -117,7 +117,8 @@ class HomekitApp extends Homey.App {
     // If the app is started less than 10 minuten after a reboot, wait for
     // devices to settle before starting the bridge, otherwise iOS will get
     // confused.
-    const uptime = (await this.api.system.getInfo()).uptime;
+    const settleTime = Homey.ManagerSettings.get('settleTime') || 120;
+    const uptime     = (await this.api.system.getInfo()).uptime;
     if (uptime < 600) {
       this.log('Homey rebooted, waiting for devices to settle');
       let previousDeviceCount = 0;
@@ -128,8 +129,8 @@ class HomekitApp extends Homey.App {
           break;
         }
         previousDeviceCount = newDeviceCount;
-        this.log('devices have not yet settled, waiting for 120 seconds...');
-        await delay(120000);
+        this.log('devices have not yet settled, waiting for ${ settleTime } seconds...');
+        await delay(settleTime * 1000);
       }
     }
     this.startingServer();
