@@ -218,7 +218,7 @@
               acc[val.split('.')[0]] = true;
               return acc;
             }, {});
-            if (device.class === 'light' && 'onoff' in capabilities) {
+            if ([device.class, device.virtualClass].includes('light') && 'onoff' in capabilities) {
               return true;
             } else if (device.class === 'lock' && 'locked' in capabilities) {
               return true;
@@ -238,9 +238,11 @@
               return true;
             } else if (device.class === 'doorbell' && 'alarm_generic' in capabilities) {
               return true;
-            } else if ('homealarm_state' in capabilities) {
+            } else if ('homealarm_state' in capabilities || device.class === 'homealarm' || device.virtualClass === 'homealarm') {
               return true;
-            } else if ([ 'sensor', 'other' ].includes(device.class) && ('measure_luminance' in capabilities || 'measure_temperature' in capabilities || 'measure_humidity' in capabilities || 'alarm_motion' in capabilities || 'alarm_water' in capabilities || 'alarm_contact' in capabilities || 'alarm_smoke' in capabilities || 'alarm_co' in capabilities || 'alarm_co2' in capabilities)) {
+            } else if ([ device.class, device.virtualClass ].includes('speaker')) {
+              return true;
+            } else if ([ 'sensor', 'other' ].includes(device.class) && ('measure_luminance' in capabilities || 'measure_temperature' in capabilities || 'measure_humidity' in capabilities || 'measure_pressure' in capabilities || 'alarm_motion' in capabilities || 'alarm_water' in capabilities || 'alarm_contact' in capabilities || 'alarm_smoke' in capabilities || 'alarm_co' in capabilities || 'alarm_co2' in capabilities)) {
               return true;
             }
             return false;
