@@ -49,6 +49,15 @@ $ athom app install
 
 ## Changelog
 
+### 3.0.7
+
+- Support for device class `speaker`
+- Fixed issue with settings
+- Configurable settle time
+- Support `onoff` for device class `homealarm`
+- Support `onoff` and `dim` for device class `sensor`
+- Removed log tab from settings page (wasn't being used anyway)
+
 ### 3.0.6
 
 - Wait longer after a reboot for devices to settle to prevent iOS from not recognizing devices anymore
