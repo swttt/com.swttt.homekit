@@ -49,6 +49,10 @@ $ athom app install
 
 ## Changelog
 
+### 3.0.8
+
+- Swapped `button/homealarm_system` detection to work better with Heimdall
+
 ### 3.0.7
 
 - Support for device class `speaker`
