@@ -175,10 +175,6 @@ class HomekitApp extends Homey.App {
       this.log('Found class with onoff: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createSwitch(device, api));
-    } else if ('button' in capabilities) {
-      this.log('Found button: ' + device.name)
-      isPaired = true;
-      bridge.addBridgedAccessory(homekit.createButton(device, api));
     } else if (device.class === 'thermostat' && 'measure_temperature' in capabilities && 'target_temperature' in capabilities) {
       this.log('Found thermostat: ' + device.name)
       isPaired = true;
@@ -195,6 +191,10 @@ class HomekitApp extends Homey.App {
       this.log('Found speaker: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createSpeaker(device, api, capabilities));
+    } else if ('button' in capabilities) {
+      this.log('Found button: ' + device.name)
+      isPaired = true;
+      bridge.addBridgedAccessory(homekit.createButton(device, api));
     } else if ([ 'sensor', 'other' ].includes(device.class) && ('measure_luminance' in capabilities || 'measure_temperature' in capabilities || 'measure_humidity' in capabilities || 'measure_pressure' in capabilities || 'alarm_motion' in capabilities || 'alarm_water' in capabilities || 'alarm_contact' in capabilities || 'alarm_smoke' in capabilities || 'alarm_co' in capabilities || 'alarm_co2' in capabilities)) {
       this.log('Found Sensor: ' + device.name)
       isPaired = true;
