@@ -49,6 +49,10 @@ $ athom app install
 
 ## Changelog
 
+### 3.0.9
+
+- Some fixes for Satel Integra support
+
 ### 3.0.8
 
 - Swapped `button/homealarm_system` detection to work better with Heimdall
