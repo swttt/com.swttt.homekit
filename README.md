@@ -47,9 +47,29 @@ $ cd com.swttt.homekit
 $ athom app install
 ```
 
-**NB**: you cannot run the (experimental) built-in HomeKit implementation from v2 and HomeyKit at the same time.
-
 ## Changelog
+
+### 3.0.6
+
+- Wait longer after a reboot for devices to settle to prevent iOS from not recognizing devices anymore
+
+### 3.0.5
+
+- Prevent non-existent capabilities from being accessed/used
+- Cleanups
+- Debouncing dim so it doesn't glitch as much
+
+### 3.0.4
+
+- Better check on required capabilities for devices to prevent crashes
+
+### 3.0.3
+
+- Also check `device.virtualClass` during device discovery.
+
+### 3.0.2
+
+- Fix to prevent issues due to Athom's implementation hijacking our TCP port
 
 ### 3.0.1
 

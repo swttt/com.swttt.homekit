@@ -1,6 +1,6 @@
 {
   "id": "com.swttt.homekit",
-  "version": "3.0.1",
+  "version": "3.0.6",
   "sdk": 2,
   "permissions": [
     "homey:manager:api"
@@ -22,13 +22,6 @@
   "author": {
     "name": "Bas Jansen",
     "email": "b@sjansen.email"
-  },
-  "contributing": {
-    "donate": {
-      "paypal": {
-        "username": "BasJansen"
-      }
-    }
   },
   "contributors": {
     "developers": [{

@@ -30,7 +30,7 @@
       <div v-if="currentPage == 'devices'">
         <input v-model='search' @keyup='onKeyUp' class='input' type='text' placeholder='Filter...'>
         <div class='columns is-multiline is-tablet' style='margin: 0.75rem 0'>
-          <div v-for='device in filteredItems' class='column is-half-tablet is-one-third-desktop'>
+          <div v-for='device in filteredItems' :key='device.id' class='column is-half-tablet is-one-third-desktop'>
             <div class='card'>
               <div class='card-content'>
                 <div class='media'>
@@ -193,7 +193,7 @@
             }, {});
             if (device.class === 'light' && 'onoff' in capabilities) {
               return true;
-            } else if (device.class === 'lock') {
+            } else if (device.class === 'lock' && 'locked' in capabilities) {
               return true;
             } else if (device.class === 'windowcoverings' && 'windowcoverings_state' in capabilities && !('dim' in capabilities)) {
               return true;
@@ -207,7 +207,7 @@
               return true;
             } else if ('button' in capabilities) {
               return true;
-            } else if (device.class === 'thermostat') {
+            } else if (device.class === 'thermostat' && 'measure_temperature' in capabilities && 'target_temperature' in capabilities) {
               return true;
             } else if (device.class === 'doorbell' && 'alarm_generic' in capabilities) {
               return true;
@@ -225,6 +225,12 @@
           await this.getLog();
           Homey.on('log.new', res => {
             this.log = res;
+          });
+          Homey.on('settings.set', async (key) => {
+            if (key === 'pairedDevices') {
+              await this.getDevices();
+              this.pairedDevices = await this.getSetting('pairedDevices');
+            }
           });
         },
         computed: {
