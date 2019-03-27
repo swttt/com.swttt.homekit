@@ -199,7 +199,7 @@ class HomekitApp extends Homey.App {
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createSensor(device, api, capabilities));
     } else {
-      this.log('No matching class found for: ${ device.name } of class ${ device.class }');
+      this.log(`No matching class found for: ${ device.name } of class ${ device.class }`);
     }
     this.pairedDevices[device.id] = isPaired;
 
