@@ -49,6 +49,11 @@ $ athom app install
 
 ## Changelog
 
+### 3.0.10
+
+- Fixes #149 (issue with CO2 and CO sensors)
+- Removing explicit subscription for device update events (not required anymore)
+
 ### 3.0.9
 
 - Some fixes for Satel Integra support
