@@ -226,6 +226,8 @@
               return true;
             } else if (device.class === 'windowcoverings' && 'dim' in capabilities) {
               return true;
+            } else if (device.class === 'curtain' && 'windowcoverings_set' in capabilities) {
+              return true;
             } else if (device.class === 'socket' && 'onoff' in capabilities) {
               return true;
             } else if ((device.class === 'fan' || device.class === 'heater') && 'onoff' in capabilities) {
