@@ -39,7 +39,9 @@ class HomekitApp extends Homey.App {
     const api = this.api;
 
     // Start by creating our Bridge which will host all loaded Accessories
-    bridge = new Bridge('Homey', uuid.generate("Homey"));
+    let bridgeIdentifier = Homey.ManagerSettings.get('bridgeIdentifier') || 'Homey';
+    this.log(`Using "${ bridgeIdentifier }" as bridge identifier`);
+    bridge = new Bridge(bridgeIdentifier, uuid.generate(bridgeIdentifier));
     bridge
       .getService(Service.AccessoryInformation)
       .setCharacteristic(Characteristic.Manufacturer, 'Athom')

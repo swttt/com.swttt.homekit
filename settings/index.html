@@ -80,21 +80,53 @@
         <div class='column is-half-tablet is-offset-one-quarter-tablet is-one-third-desktop is-offset-one-third-desktop'>
           <div class='box has-text-centered'>
             <p>
+              If you want to run multiple instances of Homeykit in your
+              network, for instance if you have two (or more) Homey's, each
+              instance should have a unique bridge identifier.
+            </p>
+            <p>
+              <b>
+              After changing this setting, restart the Homeykit app for the
+              change to take effect.
+              </b>
+            </p>
+            <p>
+              <b style='color:red'>Change this only if you have a reason to do
+                so, otherwise you may lose your current HomeKit
+                configuration.</b>
+            </p>
+            <div class='is-mobile' style='margin-top: 0.75rem'>
+              <div class='field is-horizontal'>
+                <div class='field-label is-normal'>
+                  <label class='label'>Bridge Identifier:</label>
+                </div>
+                <div class='field-body'>
+                  <div class='field'>
+                    <p class='control'>
+                      <input class='input' type='string' v-model='bridgeIdentifier'>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class='box has-text-centered'>
+            <p>
               If you run into the problem that your Homekit configuration (rooms, automations) gets lost after a reboot,
               you can configure a "settle time" here. By default, this is 2 minutes, which may not be enough for Homey's
               with lots of devices and/or apps installed.
             </p>
-            <div class='columns is-mobile' style='margin-top: 0.75rem; align-items: center'>
-              <div class='column is-three-quarters-mobile' style='text-align: right'>
-                <i>
-                  Settle Time (seconds):
-                </i>
-              </div>
-              <div class='column'>
-                <div class='field'>
-                  <p class='control'>
-                    <input class='input' type='number' v-model='settleTime'>
-                  </p>
+            <div class='is-mobile' style='margin-top: 0.75rem'>
+              <div class='field is-horizontal'>
+                <div class='field-label is-normal'>
+                  <label class='label'>Settle Time (seconds):</label>
+                </div>
+                <div class='field-body'>
+                  <div class='field'>
+                    <p class='control'>
+                      <input class='input' type='number' v-model='settleTime'>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -122,12 +154,13 @@
       new Vue({
         el   : '#app',
         data : {
-          devices       : {},
-          pairedDevices : {},
-          search        : '',
-          currentPage   : 'devices',
-          settleTime    : 120,
-          log           : []
+          devices:          {},
+          pairedDevices:    {},
+          search:           '',
+          currentPage:      'devices',
+          settleTime:       120,
+          bridgeIdentifier: 'Homey',
+          log:              []
         },
         methods: {
           onKeyUp(ev) {
@@ -165,7 +198,8 @@
             });
           },
           async getSettings() {
-            this.settleTime = await this.getSetting('settleTime') || 120;
+            this.settleTime       = await this.getSetting('settleTime') || 120;
+            this.bridgeIdentifier = await this.getSetting('bridgeIdentifier') || 'Homey';
           },
           async getLog() {
             this.log = []; // await this.request('GET', '/log');
@@ -293,6 +327,9 @@
         watch: {
           async settleTime(value) {
             await this.setSetting('settleTime', value);
+          },
+          async bridgeIdentifier(value) {
+            await this.setSetting('bridgeIdentifier', value);
           }
         }
       })
