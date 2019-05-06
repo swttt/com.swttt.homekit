@@ -49,6 +49,12 @@ $ athom app install
 
 ## Changelog
 
+### 3.0.11
+
+- Stability changes (hopefully fixes #137)
+- Allow user to set different bridge identifier (#151)
+- Added support for curtains (#153)
+
 ### 3.0.10
 
 - Fixes #149 (issue with CO2 and CO sensors)
