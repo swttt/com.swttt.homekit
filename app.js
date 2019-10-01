@@ -164,8 +164,8 @@ class HomekitApp extends Homey.App {
       this.log('Found blinds (dim): ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createDimBlinds(device, api));
-    } else if (device.class === 'curtain' && 'windowcoverings_set' in capabilities) {
-      this.log('Found curtains (windowcovering_set): ' + device.name)
+    } else if ([ 'curtain', 'blinds' ].includes(device.class) && 'windowcoverings_set' in capabilities) {
+      this.log(`Found ${ device.class } (windowcovering_set): ${ device.name }`);
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createCurtains(device, api));
     } else if (device.class === 'socket' && 'onoff' in capabilities) {
