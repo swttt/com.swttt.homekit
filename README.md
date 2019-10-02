@@ -51,6 +51,10 @@ $ athom app install
 
 ### 3.0.11
 
+- Added support for blinds (#180 and hopefully #159)
+
+### 3.0.11
+
 - Stability changes (hopefully fixes #137)
 - Allow user to set different bridge identifier (#151)
 - Added support for curtains (#153)
