@@ -1,11 +1,8 @@
 {
   "name": "com.swttt.homekit",
-  "version": "3.0.12",
+  "version": "3.0.13",
   "description": "Homekit app for Homey",
   "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "Bas Jansen",
   "license": "ISC",
   "dependencies": {

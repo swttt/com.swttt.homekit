@@ -49,7 +49,11 @@ $ athom app install
 
 ## Changelog
 
-### 3.0.11
+### 3.0.13
+
+- Added support for curtains and generic window coverings
+
+### 3.0.12
 
 - Added support for blinds (#180 and hopefully #159)
 
