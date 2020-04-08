@@ -130,7 +130,7 @@ class HomekitApp extends Homey.App {
           break;
         }
         previousDeviceCount = newDeviceCount;
-        this.log('devices have not yet settled, waiting for ${ settleTime } seconds...');
+        this.log(`devices have not yet settled, waiting for ${ settleTime } seconds...`);
         await delay(settleTime * 1000);
       }
     }
