@@ -1,6 +1,6 @@
 {
   "name": "com.swttt.homekit",
-  "version": "3.0.14",
+  "version": "3.0.15",
   "description": "Homekit app for Homey",
   "main": "app.js",
   "author": "Bas Jansen",
