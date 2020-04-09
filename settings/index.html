@@ -134,7 +134,7 @@
           <div class='box has-text-centered'>
             <p>
               If you have problems trying to add Homey to HomeKit, for instance, if HomeKit can't find the "Homey" accessory,
-              you can try and clear the HomeKit storage.
+              you can try and clear the HomeKit storage. Make sure to restart the app afterwards!
             </p>
             <p style='margin-top: 0.75rem'>
               <a @click="clearStorage()" class='button is-danger' data-i18n="app.clearStorage">Clear HomeKit storage and start over.</a>
@@ -231,9 +231,10 @@
             await this.updatePairedDevices();
           },
           async clearStorage() {
-            Homey.confirm('Are you sure!?', async (err, response) => {
+            Homey.confirm('Are you sure!?', 'warning', async (err, response) => {
               if (response === true) {
                 await this.request('GET', '/clear-storage', { value : response });
+                Homey.alert('Storage is cleared, please restart the Homeykit app!');
               }
             });
           },

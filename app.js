@@ -1,5 +1,8 @@
 // process.env.DEBUG = '*';
 
+const EventEmitter = require('events');
+EventEmitter.defaultMaxListeners = 100;
+
 const Homey          = require('homey')
 const { HomeyAPI }   = require('athom-api')
 const fs             = require('fs');
@@ -19,7 +22,7 @@ let bridge;
 
 storage.initSync();
 
-class HomekitApp extends Homey.App {
+module.exports = class HomekitApp extends Homey.App {
   // Get API control function
   getApi() {
     if (! this.api) {
@@ -98,13 +101,15 @@ class HomekitApp extends Homey.App {
     });
 
     // Publish bridge
+    const username = Homey.ManagerSettings.get('username') || 'CC:22:3D:E3:CE:F6';
+    this.log(`Using ${ username } as username.`);
     bridge.publish({
-      username: "CC:22:3D:E3:CE:F6",
-      port: 51833,
-      pincode: "200-20-200",
+      username: username,
+      port:     51833,
+      pincode:  '200-20-200',
       category: Accessory.Categories.BRIDGE
     });
-    this.log("Started bridge");
+    this.log('Started bridge');
   }
 
   // On app init
@@ -238,7 +243,11 @@ class HomekitApp extends Homey.App {
 
   clearStorage() {
     storage.clearSync();
+    // generate a new bridge 'username' to allow iOS to rediscover the bridge
+    const username = 'XX:XX:XX:XX:XX:XX'.replace(/X/g, function() {
+      return '0123456789ABCDEF'.charAt(Math.floor(Math.random() * 16))
+    });
+    this.log(`Setting new username to ${ username }`);
+    Homey.ManagerSettings.set('username', username);
   }
 }
-
-module.exports = HomekitApp;
