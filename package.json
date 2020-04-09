@@ -8,7 +8,7 @@
   "dependencies": {
     "athom-api": "^2.1.179",
     "bonjour": "github:abedinpour/bonjour#2845ce7606ecb58ce361726ade9ce71bcd9909c5",
-    "hap-nodejs": "^0.4.41",
+    "hap-nodejs": "^0.4.53",
     "lodash.debounce": "^4.0.8",
     "os": "^0.1.1"
   }
