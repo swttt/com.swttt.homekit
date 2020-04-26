@@ -161,7 +161,7 @@ module.exports = class HomekitApp extends Homey.App {
       this.log('Found lock: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createLock(device, api));
-    } else if ([ 'curtain', 'blinds', 'sunshade', 'windowcoverings' ].includes(device.class) && 'windowcoverings_set' in capabilities) {
+    } else if ([ 'curtain', 'blinds', 'sunshade', 'windowcoverings' ].includes(device.class) && 'windowcoverings_set' in capabilities && !('dim' in capabilities)) {
       this.log(`Found ${ device.class } (windowcovering_set): ${ device.name }`);
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createCurtains(device, api));
@@ -173,10 +173,6 @@ module.exports = class HomekitApp extends Homey.App {
       this.log('Found blinds (dim): ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createDimBlinds(device, api));
-    } else if ([ 'curtain', 'blinds', 'sunshade', 'windowcoverings' ].includes(device.class) && 'windowcoverings_set' in capabilities) {
-      this.log(`Found ${ device.class } (windowcovering_set): ${ device.name }`);
-      isPaired = true;
-      bridge.addBridgedAccessory(homekit.createCurtains(device, api));
     } else if (device.class === 'socket' && 'onoff' in capabilities) {
       this.log('Found socket: ' + device.name)
       isPaired = true;
