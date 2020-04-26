@@ -4,5 +4,8 @@
   },
   "3.0.15": {
     "en": "Fix for v4.2.0, better discoverability"
+  },
+  "3.0.16": {
+    "en": "Fixed some issues with window coverings"
   }
 }
