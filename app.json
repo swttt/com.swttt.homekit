@@ -23,6 +23,10 @@
     "name": "Bas Jansen",
     "email": "b@sjansen.email"
   },
+  "bugs": {
+    "url": "https://github.com/swttt/com.swttt.homekit/issues/"
+  },
+  "source": "https://github.com/swttt/com.swttt.homekit/",
   "contributors": {
     "developers": [{
         "name": "Bas Jansen",
