@@ -1,5 +1,4 @@
 // process.env.DEBUG = '*';
-
 const EventEmitter = require('events');
 EventEmitter.defaultMaxListeners = 100;
 
@@ -156,7 +155,7 @@ module.exports = class HomekitApp extends Homey.App {
     if ([device.class, device.virtualClass].includes('light') && 'onoff' in capabilities) {
       this.log('Found light: ' + device.name)
       isPaired = true;
-      bridge.addBridgedAccessory(homekit.createLight(device, api, capabilities));
+      bridge.addBridgedAccessory(homekit.createLight(device, api));
     } else if (device.class === 'lock' && 'locked' in capabilities) {
       this.log('Found lock: ' + device.name)
       isPaired = true;
