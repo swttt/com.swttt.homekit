@@ -10,5 +10,8 @@
   },
   "3.0.17": {
     "en": "Work around issue with Aqara curtains"
+  },
+  "3.0.18": {
+    "en": "Added support for double/triple/... lights and sockets"
   }
 }
