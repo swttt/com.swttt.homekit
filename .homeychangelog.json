@@ -13,5 +13,8 @@
   },
   "3.0.18": {
     "en": "Added support for double/triple/... lights and sockets"
+  },
+  "3.0.19": {
+    "en": "Removed external dependencies"
   }
 }
