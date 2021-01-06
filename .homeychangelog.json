@@ -19,5 +19,8 @@
   },
   "3.0.20": {
     "en": "Removed custom services/characteristics, fixed possible crash"
+  },
+  "3.0.21": {
+    "en": "Cleanups"
   }
 }
