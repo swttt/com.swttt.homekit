@@ -20,8 +20,8 @@
   "category": "appliances",
   "compatibility": ">=2.0.0",
   "author": {
-    "name": "Bas Jansen",
-    "email": "b@sjansen.email"
+    "name": "Robert Klep",
+    "email": "robert@klep.name"
   },
   "bugs": {
     "url": "https://github.com/swttt/com.swttt.homekit/issues/"
@@ -41,6 +41,13 @@
         "email": "robert@klep.name"
       }
     ]
+  },
+  "contributing": {
+    "donate": {
+      "paypal": {
+        "username": "robertklep"
+      }
+    }
   },
   "images": {
     "large": "./assets/images/large.png",
