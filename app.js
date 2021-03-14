@@ -248,5 +248,6 @@ module.exports = class HomekitApp extends Homey.App {
     });
     this.log(`Setting new username to ${ username }`);
     Homey.ManagerSettings.set('username', username);
+    Homey.ManagerSettings.set('pairedDevices', null);
   }
 }
