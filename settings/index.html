@@ -42,13 +42,14 @@
                     </figure>
                   </div>
                   <div class='media-content'>
-                    <div class='has-text-centered title    is-4'>{{ device.name }}</div>
-                    <div class='has-text-centered subtitle is-6' style='margin-top: 0.5rem'>
-                      <a v-if="canRemove(device)" @click="removeDevice(device)" class="button is-outlined is-small is-danger"  data-i18n="device.delete">Delete</a>
-                      <a v-else                   @click="addDevice(device)"    class="button is-outlined is-small is-success" data-i18n="device.add">Add</a>
-                    </div>
+                    <div class='title    is-4'>{{ device.name }}</div>
+                    <div class='subtitle is-6'>{{ device.zoneName }}</div>
                   </div>
                 </div>
+              </div>
+              <div class='card-footer'>
+                <a v-if="canRemove(device)" @click="removeDevice(device)" class="card-footer-item is-danger"  data-i18n="device.delete">Delete</a>
+                <a v-else                   @click="addDevice(device)"    class="card-footer-item is-success" data-i18n="device.add">Add</a>
               </div>
             </div>
           </div>
@@ -304,7 +305,7 @@
         computed: {
           filteredItems() {
             var options = {
-              keys:               [ 'name', 'zone.name', 'class' ],
+              keys:               [ 'name', 'zoneName', 'class' ],
               shouldSort:         true,
               findAllMatches:     true,
               threshold:          0.6,
