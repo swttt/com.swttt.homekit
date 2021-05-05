@@ -25,5 +25,8 @@
   },
   "3.0.22": {
     "en": "Handle unknown devices better. Also remove paired devices configuration when doing a reset."
+  },
+  "3.1.0": {
+    "en": "Show device zone on settings page, fixed search"
   }
 }
