@@ -22,5 +22,8 @@
   },
   "3.0.21": {
     "en": "Cleanups"
+  },
+  "3.0.22": {
+    "en": "Handle unknown devices better. Also remove paired devices configuration when doing a reset."
   }
 }
