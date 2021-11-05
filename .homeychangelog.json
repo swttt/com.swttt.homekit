@@ -31,5 +31,8 @@
   },
   "3.2.0": {
     "en": "Added support for HomeKit Controller app"
+  },
+  "4.0.0": {
+    "en": "New stable release"
   }
 }
