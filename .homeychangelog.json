@@ -28,5 +28,8 @@
   },
   "3.1.0": {
     "en": "Show device zone on settings page, fixed search"
+  },
+  "3.2.0": {
+    "en": "Added support for HomeKit Controller app"
   }
 }
