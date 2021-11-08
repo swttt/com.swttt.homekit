@@ -11,8 +11,8 @@
     "nl": "HomeyKit"
   },
   "description": {
-    "en": "Homekit support for Homey",
-    "nl": "Homekit ondersteuning voor Homey"
+    "en": "Control your Homey devices with Apple's Home app and Siri",
+    "nl": "Bedien je Homey apparaten met Apple's Woning app en Siri"
   },
   "tags": {
     "en": ["homekit", "siri", "iOS"],

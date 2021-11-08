@@ -1,5 +1,5 @@
-With this app you can pair Homey to iOS Homekit and control your devices using Siri.
+To add Homey devices to your Apple device, open the Home app on your
+device, click the "＋", then "Add Accessory".
 
-After installing the app grab your iPhone or iPad. Got to the Home app on your iOS devices, click the `+` and add new accessory.
-
-Add the code manually: 200-20-200
+Choose "More options...", "My Accessory Isn't Shown Here" and press "Enter
+code...". Here you can enter the following HomeKit code: 200-20-200
