@@ -34,5 +34,8 @@
   },
   "4.0.0": {
     "en": "New stable release"
+  },
+  "4.0.1": {
+    "en": "Added support for state blinds/curtains/sunshades"
   }
 }
