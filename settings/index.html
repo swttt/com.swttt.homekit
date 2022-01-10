@@ -257,11 +257,11 @@
               return true;
             } else if (device.class === 'lock' && 'locked' in capabilities) {
               return true;
-            } else if (device.class === 'windowcoverings' && 'windowcoverings_state' in capabilities && !('dim' in capabilities)) {
-              return true;
-            } else if (device.class === 'windowcoverings' && 'dim' in capabilities) {
+            } else if ([ 'curtain', 'blinds', 'sunshade', 'windowcoverings' ].includes(device.class) && 'windowcoverings_state' in capabilities && !('dim' in capabilities)) {
               return true;
             } else if ([ 'curtain', 'blinds', 'sunshade', 'windowcoverings' ].includes(device.class) && 'windowcoverings_set' in capabilities) {
+              return true;
+            } else if (device.class === 'windowcoverings' && 'dim' in capabilities) {
               return true;
             } else if (device.class === 'socket' && 'onoff' in capabilities) {
               return true;
