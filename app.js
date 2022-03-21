@@ -147,7 +147,9 @@ module.exports = class HomekitApp extends Homey.App {
 
     let api          = this.api;
     let capabilities = device.capabilities.reduce((acc, val) => {
-      acc[val.split('.')[0]] = true;
+      if (typeof val === 'string') {
+        acc[val.split('.')[0]] = true;
+      }
       return acc;
     }, {});
 
