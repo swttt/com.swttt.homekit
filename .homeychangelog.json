@@ -43,5 +43,8 @@
   },
   "4.1.1": {
     "en": "More fixes to work around issues in SDKv3 on v7.4.X-rc.Y"
+  },
+  "4.1.2": {
+    "en": "Work around more issues in the Web API"
   }
 }
