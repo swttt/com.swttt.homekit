@@ -40,5 +40,8 @@
   },
   "4.1.0": {
     "en": "Changes for Homey v7.4.0-rc.X"
+  },
+  "4.1.1": {
+    "en": "More fixes to work around issues in SDKv3 on v7.4.X-rc.Y"
   }
 }
