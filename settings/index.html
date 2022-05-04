@@ -267,7 +267,7 @@
               return true;
             } else if ((device.class === 'fan' || device.class === 'heater') && 'onoff' in capabilities) {
               return true;
-            } else if (['amplifier', 'coffeemachine', 'kettle', 'tv', 'other'].includes(device.class) && 'onoff' in capabilities) {
+            } else if (['amplifier', 'button', 'coffeemachine', 'kettle', 'tv', 'other'].includes(device.class) && 'onoff' in capabilities) {
               return true;
             } else if ('button' in capabilities) {
               return true;
