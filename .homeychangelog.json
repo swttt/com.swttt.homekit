@@ -37,5 +37,8 @@
   },
   "4.0.1": {
     "en": "Added support for state blinds/curtains/sunshades"
+  },
+  "4.1.0": {
+    "en": "Changes for Homey v7.4.0-rc.X"
   }
 }
