@@ -143,7 +143,7 @@ module.exports = class HomekitApp extends Homey.App {
 
   // Add device function
   async addDevice(device) {
-    if (! device) return;
+    if (! device || ! device.capabilitiesObj) return;
 
     let api          = this.api;
     let capabilities = device.capabilities.reduce((acc, val) => {
