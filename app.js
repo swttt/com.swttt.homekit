@@ -102,13 +102,18 @@ module.exports = class HomekitApp extends Homey.App {
     // Publish bridge
     const username = Homey.ManagerSettings.get('username') || 'CC:22:3D:E3:CE:F6';
     this.log(`Using ${ username } as username.`);
-    bridge.publish({
-      username: username,
-      port:     51833,
-      pincode:  '200-20-200',
-      category: Accessory.Categories.BRIDGE
-    });
-    this.log('Started bridge');
+    try {
+      await bridge.publish({
+        username: username,
+        port:     51833,
+        pincode:  '200-20-200',
+        category: Accessory.Categories.BRIDGE
+      });
+      this.log('Started bridge');
+    } catch(e) {
+      this.error('Unable to start bridge');
+      this.error(e);
+    }
   }
 
   // On app init
