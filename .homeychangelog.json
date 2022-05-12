@@ -52,5 +52,8 @@
   },
   "4.1.4": {
     "en": "Catch errors when starting bridge"
+  },
+  "4.1.5": {
+    "en": "Work around yet more issues in SDKv3"
   }
 }
