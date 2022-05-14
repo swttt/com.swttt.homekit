@@ -84,7 +84,7 @@ module.exports = class HomekitApp extends Homey.App {
     // Watch for setting changes
     Homey.ManagerSettings.on('set', debounce(key => {
       if (key === 'pairedDevices') {
-        this.pairedDevices = Homey.ManagerSettings.get('pairedDevices');
+        this.pairedDevices = Homey.ManagerSettings.get('pairedDevices') || {};
       }
     }, 100));
 
