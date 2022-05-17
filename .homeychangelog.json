@@ -58,5 +58,8 @@
   },
   "4.1.6": {
     "en": "More small fixes"
+  },
+  "4.1.7": {
+    "en": "Catching more Web API errors"
   }
 }
