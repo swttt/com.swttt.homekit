@@ -121,7 +121,13 @@ module.exports = class HomekitApp extends Homey.App {
     if (Homey.env.RESET_SETTINGS) {
       Homey.ManagerSettings.set('pairedDevices', null);
     }
-    this.api = await this.getApi();
+    try {
+      this.api = await this.getApi();
+    } catch(e) {
+      this.error('Unable to get API instance');
+      this.error(e);
+      return;
+    }
     this.pairedDevices = {};
 
     // If the app is started less than 10 minuten after a reboot, wait for
