@@ -61,5 +61,8 @@
   },
   "4.1.7": {
     "en": "Catching more Web API errors"
+  },
+  "4.1.8": {
+    "en": "Make sure all devices are ready before being added to the bridge"
   }
 }
