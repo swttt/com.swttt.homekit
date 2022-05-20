@@ -154,7 +154,7 @@ module.exports = class HomekitApp extends Homey.App {
 
   // Add device function
   async addDevice(device) {
-    if (! device || ! device.capabilitiesObj || bridge.bridgedAccessories.length >= 149) return;
+    if (! device || ! device.ready || ! device.capabilitiesObj || bridge.bridgedAccessories.length >= 149) return;
 
     let api          = this.api;
     let capabilities = device.capabilities.reduce((acc, val) => {
