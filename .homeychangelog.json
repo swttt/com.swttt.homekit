@@ -64,5 +64,8 @@
   },
   "4.1.8": {
     "en": "Make sure all devices are ready before being added to the bridge"
+  },
+  "4.2": {
+    "en": "Add fan support for MELCloud thermostats"
   }
 }
