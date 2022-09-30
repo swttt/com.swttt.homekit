@@ -193,7 +193,7 @@ module.exports = class HomekitApp extends Homey.App {
       this.log('Found fan/heater: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createFan(device, api, capabilities));
-    } else if (['amplifier', 'button', 'coffeemachine', 'kettle', 'tv', 'other'].includes(device.class) && 'onoff' in capabilities) {
+    } else if (['amplifier', 'button', 'coffeemachine', 'kettle', 'tv', 'other', 'remote'].includes(device.class) && 'onoff' in capabilities) {
       this.log('Found class with onoff: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createSwitch(device, api));
