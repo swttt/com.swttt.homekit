@@ -64,5 +64,8 @@
   },
   "4.1.8": {
     "en": "Make sure all devices are ready before being added to the bridge"
+  },
+  "4.1.9": {
+    "en": "Support for \"remote\" devices with onoff capabilities and fixed issues with `locked` subcapabilities."
   }
 }
