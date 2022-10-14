@@ -4,7 +4,6 @@
   "description": "Homekit app for Homey",
   "main": "app.js",
   "author": "Robert Klep",
-  "license": "ISC",
   "dependencies": {
     "athom-api": "^2.1.179",
     "bonjour": "github:abedinpour/bonjour#2845ce7606ecb58ce361726ade9ce71bcd9909c5",
