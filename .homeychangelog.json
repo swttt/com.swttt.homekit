@@ -67,5 +67,8 @@
   },
   "4.1.9": {
     "en": "Support for \"remote\" devices with onoff capabilities and fixed issues with `locked` subcapabilities."
+  },
+  "4.1.10": {
+    "en": "Added link to community forum page."
   }
 }
