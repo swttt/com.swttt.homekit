@@ -19,7 +19,8 @@ const delay          = ms => new Promise(resolve => setTimeout(resolve, ms));
 const homekit = require('./lib/');
 let bridge;
 
-storage.initSync();
+// make sure we're running inside the /userdata directory (because of `node-persist`).
+process.chdir('/userdata');
 
 module.exports = class HomekitApp extends Homey.App {
   // Get API control function
