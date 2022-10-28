@@ -1,6 +1,6 @@
 {
   "name": "com.swttt.homekit",
-  "version": "4.1.10",
+  "version": "4.2.0",
   "description": "Homekit app for Homey",
   "main": "app.js",
   "author": "Robert Klep",
