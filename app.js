@@ -19,8 +19,34 @@ const delay          = ms => new Promise(resolve => setTimeout(resolve, ms));
 const homekit = require('./lib/');
 let bridge;
 
+// Clear storage the hard way.
+function clearHAPStorage() {
+  console.error('Clearing internal storage:');
+  for (const f of fs.readdirSync('/userdata')) {
+    const path = `/userdata/${ f }`;
+    console.error('- removing', path);
+    fs.rmSync(path, { recursive : true });
+  }
+}
+
 // make sure we're running inside the /userdata directory (because of `node-persist`).
-process.chdir('/userdata');
+try {
+  console.log('Storage', fs.readdirSync('/userdata'));
+  process.chdir('/userdata');
+  storage.initSync();
+  storage.values(v => console.log('V', v));
+} catch(e) {
+  console.error(e);
+  console.error('Will try to fix:');
+  try {
+    clearHAPStorage();
+    storage.initSync();
+  } catch(e) {
+    console.error(e)
+    console.error('Cannot fix storage issues, giving up', e);
+    throw e;
+  }
+}
 
 module.exports = class HomekitApp extends Homey.App {
   // Get API control function
@@ -255,7 +281,7 @@ module.exports = class HomekitApp extends Homey.App {
   }
 
   clearStorage() {
-    storage.clearSync();
+    clearHAPStorage();
     // generate a new bridge 'username' to allow iOS to rediscover the bridge
     const username = 'XX:XX:XX:XX:XX:XX'.replace(/X/g, function() {
       return '0123456789ABCDEF'.charAt(Math.floor(Math.random() * 16))
