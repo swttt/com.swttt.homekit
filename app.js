@@ -7,6 +7,7 @@ const { HomeyAPI }   = require('athom-api')
 const fs             = require('fs');
 const storage        = require('node-persist');
 const path           = require('path');
+const HAPStorage     = require('hap-nodejs').HAPStorage;
 const uuid           = require('hap-nodejs').uuid;
 const Bridge         = require('hap-nodejs').Bridge;
 const Service        = require('hap-nodejs').Service;
@@ -29,23 +30,14 @@ function clearHAPStorage() {
   }
 }
 
-// make sure we're running inside the /userdata directory (because of `node-persist`).
+// Try to initialize existing storage.
 try {
-  console.log('Storage', fs.readdirSync('/userdata'));
-  process.chdir('/userdata');
-  storage.initSync();
-  storage.values(v => console.log('V', v));
+  HAPStorage.setCustomStoragePath('/userdata');
+  HAPStorage.storage();
 } catch(e) {
-  console.error(e);
-  console.error('Will try to fix:');
-  try {
-    clearHAPStorage();
-    storage.initSync();
-  } catch(e) {
-    console.error(e)
-    console.error('Cannot fix storage issues, giving up', e);
-    throw e;
-  }
+  console.error('Error initializing existing storage', e);
+  clearHAPStorage();
+  throw Error('Please restart do to an internal storage issue');
 }
 
 module.exports = class HomekitApp extends Homey.App {
