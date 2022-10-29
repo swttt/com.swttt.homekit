@@ -1,6 +1,7 @@
 env.json
 node_modules
 build
+debug
 
 # Added by Homey CLI
 /.homeybuild/
