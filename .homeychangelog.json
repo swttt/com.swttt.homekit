@@ -70,5 +70,8 @@
   },
   "4.1.10": {
     "en": "Added link to community forum page."
+  },
+  "4.2.0": {
+    "en": "Updated to latest hap-nodejs (iOS 16.2)"
   }
 }
