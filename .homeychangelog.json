@@ -73,5 +73,8 @@
   },
   "4.2.0": {
     "en": "Updated to latest hap-nodejs (iOS 16.2)"
+  },
+  "4.2.1": {
+    "en": "Fix storage issues"
   }
 }
