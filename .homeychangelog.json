@@ -76,5 +76,8 @@
   },
   "4.2.1": {
     "en": "Fix storage issues"
+  },
+  "4.3.0": {
+    "en": "Added migration path from old to new HAP libraries (and back again)."
   }
 }
