@@ -240,6 +240,10 @@ module.exports = class HomekitApp extends Homey.App {
       this.log('Found Sensor: ' + device.name)
       isPaired = true;
       bridge.addBridgedAccessory(homekit.createSensor(device, api, capabilities));
+    } else if (device.class === 'garagedoor' && 'garagedoor_closed' in capabilities) {
+      this.log('Found garage door:', device.name);
+      isPaired = true;
+      bridge.addBridgedAccessory(homekit.createGarageDoorOpener(device, api, capabilities));
     } else {
       this.log(`No matching class found for: ${ device.name } of class ${ device.class }`);
     }
