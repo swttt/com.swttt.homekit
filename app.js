@@ -255,7 +255,7 @@ module.exports = class HomekitApp extends Homey.App {
   }
 
   deleteDevice(device) {
-    if (! device) return;
+    if (! device || ! bridge) return;
     this.log(`Deleting device '${ device.name }' (${ device.id }) from HomeKit`);
     delete this.pairedDevices[device.id];
     Homey.ManagerSettings.set('pairedDevices', this.pairedDevices);
