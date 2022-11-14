@@ -79,5 +79,8 @@
   },
   "4.3.0": {
     "en": "Added migration path from old to new HAP libraries (and back again)."
+  },
+  "4.3.1": {
+    "en": "Support for garage door"
   }
 }
