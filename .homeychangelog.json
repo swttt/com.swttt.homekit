@@ -85,5 +85,8 @@
   },
   "4.3.2": {
     "en": "Fixed issues with garagedoor implementation"
+  },
+  "4.3.3": {
+    "en": "Added support for obstruction alarm for garagedoor"
   }
 }
