@@ -82,5 +82,8 @@
   },
   "4.3.1": {
     "en": "Support for garage door"
+  },
+  "4.3.2": {
+    "en": "Fixed issues with garagedoor implementation"
   }
 }
