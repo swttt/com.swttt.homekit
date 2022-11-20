@@ -14,6 +14,7 @@ const Service        = require('hap-nodejs').Service;
 const Characteristic = require('hap-nodejs').Characteristic;
 const Accessory      = require('hap-nodejs').Accessory;
 const debounce       = require('lodash.debounce');
+const Mapper         = require('./lib/mapper');
 const delay          = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // Device classes
@@ -168,12 +169,30 @@ module.exports = class HomekitApp extends Homey.App {
         await delay(settleTime * 1000);
       }
     }
+    Mapper.setLogger(this.log.bind(this));
     this.startingServer();
   }
 
   // Add device function
   async addDevice(device) {
     if (! device || ! device.ready || ! device.capabilitiesObj || bridge.bridgedAccessories.length >= 149) return;
+    let isPaired = false;
+
+    this.log(`[${ device.name }:${ device.id }] trying mapper`);
+    const mappedDevice = Mapper.mapDevice(device);
+    if (mappedDevice) {
+      this.log(`[${ device.name }:${ device.id }] was able to map 🥳`);
+
+      this.pairedDevices[device.id] = true;
+
+      device.on('$delete', id => {
+        this.deleteDevice(device);
+      });
+
+      bridge.addBridgedAccessory(mappedDevice.accessorize());
+      return;
+    }
+    this.log(`[${ device.name }:${ device.id }] unable to map 🥺`);
 
     let api          = this.api;
     let capabilities = device.capabilities.reduce((acc, val) => {
@@ -183,7 +202,6 @@ module.exports = class HomekitApp extends Homey.App {
       return acc;
     }, {});
 
-    let isPaired = false;
     if ([device.class, device.virtualClass].includes('light') && 'onoff' in capabilities) {
       this.log('Found light: ' + device.name)
       isPaired = true;

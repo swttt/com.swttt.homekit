@@ -10,6 +10,7 @@
     "hap-nodejs": "^0.10.4",
     "lodash.debounce": "^4.0.8",
     "node-persist": "^0.0.11",
-    "os": "^0.1.1"
+    "os": "^0.1.1",
+    "require-all": "^3.0.0"
   }
 }
