@@ -5,7 +5,6 @@
   "main": "app.js",
   "author": "Robert Klep",
   "dependencies": {
-    "athom-api": "^2.1.179",
     "lodash.debounce": "^4.0.8",
     "node-persist": "^0.0.11"
   }

@@ -2,7 +2,8 @@
   "id": "com.swttt.homekit",
   "version": "4.3.3",
   "brandColor": "#FE9C21",
-  "sdk": 2,
+  "sdk": 3,
+  "compatibility": ">=5.0.0",
   "homeyCommunityTopicId" : 70469,
   "permissions": [
     "homey:manager:api"
@@ -20,7 +21,6 @@
     "nl": ["homekit", "siri", "iOS"]
   },
   "category": "appliances",
-  "compatibility": ">=2.0.0",
   "author": {
     "name": "Robert Klep",
     "email": "robert@klep.name"
@@ -54,5 +54,23 @@
   "images": {
     "large": "./assets/images/large.png",
     "small": "./assets/images/small.png"
+  },
+  "api" : {
+    "getDevices": {
+      "method": "GET",
+      "path": "/devices"
+    },
+    "addDevice": {
+      "method": "PUT",
+      "path": "/devices/:id"
+    },
+    "deleteDevice": {
+      "method": "DELETE",
+      "path": "/devices/:id"
+    },
+    "clearStorage": {
+      "method": "GET",
+      "path": "/clear-storage"
+    }
   }
 }

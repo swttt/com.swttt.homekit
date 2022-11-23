@@ -1,52 +1,15 @@
-'use strict';
-const Homey = require('homey')
-
-module.exports = [
-  {
-    method : 'GET',
-    path   : '/devices',
-    fn     : async (args, callback) => {
-      try {
-        return callback(null, await Homey.app.getDevices());
-      } catch(err) {
-        return callback(err);
-      }
-    }
+module.exports = {
+  async getDevices({ homey }) {
+    return await homey.app.getDevices();
   },
-  {
-    method : 'PUT',
-    path   : '/devices/:id',
-    fn     : async (args, callback) => {
-      try {
-        await Homey.app.addDeviceById(args.params.id);
-        return callback();
-      } catch(err) {
-        return callback(err);
-      }
-    }
+  async addDevice({ homey, params, body }) {
+    return await homey.app.addDeviceById(params.id);
   },
-  {
-    method : 'DELETE',
-    path   : '/devices/:id',
-    fn     : async (args, callback) => {
-      try {
-        Homey.app.deleteDeviceById(args.params.id);
-        return callback();
-      } catch(err) {
-        return callback(err);
-      }
-    }
+  async deleteDevice({ homey, params, body }) {
+    return await homey.app.deleteDeviceById(params.id);
   },
-  {
-    method : 'GET',
-    path   : '/clear-storage',
-    fn     : async (args, callback) => {
-      try {
-        Homey.app.clearStorage();
-        return callback(null, { value : true });
-      } catch(err) {
-        return callback(err);
-      }
-    }
+  async clearStorage({ homey }) {
+    Homey.app.clearStorage();
+    return { value : true };
   },
-];
+};

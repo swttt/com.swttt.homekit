@@ -1,9 +1,9 @@
-const Homey        = require('homey')
-const { HomeyAPI } = require('athom-api')
-const fs           = require('fs');
-const storage      = require('node-persist');
-const path         = require('path');
-const debounce     = require('lodash.debounce');
+const Homey           = require('homey')
+const { HomeyAPIApp } = require('./modules/homey-api');
+const fs              = require('fs');
+const storage         = require('node-persist');
+const path            = require('path');
+const debounce        = require('lodash.debounce');
 const {
   HAPStorage,
   uuid,
@@ -40,9 +40,11 @@ try {
 
 module.exports = class HomekitApp extends Homey.App {
   // Get API control function
-  getApi() {
+  async getApi() {
     if (! this.api) {
-      this.api = HomeyAPI.forCurrentHomey();
+      this.api = new HomeyAPIApp({ homey: this.homey });
+      // have to do this really early to work around a bug in the Web API
+      await this.api.devices.connect();
     }
     return this.api;
   }
@@ -58,7 +60,7 @@ module.exports = class HomekitApp extends Homey.App {
     const api = this.api;
 
     // Start by creating our Bridge which will host all loaded Accessories
-    let bridgeIdentifier = Homey.ManagerSettings.get('bridgeIdentifier') || 'Homey';
+    let bridgeIdentifier = this.homey.settings.get('bridgeIdentifier') || 'Homey';
     this.log(`Using "${ bridgeIdentifier }" as bridge identifier`);
     bridge = new Bridge(bridgeIdentifier, uuid.generate(bridgeIdentifier));
     bridge
@@ -76,7 +78,7 @@ module.exports = class HomekitApp extends Homey.App {
     // Retrieve a list of all devices, and a list of devices that should (not) be paired.
     let knownDevices         = {};
     let allDevices           = await this.getDevices();
-    let pairedDevicesSetting = Homey.ManagerSettings.get('pairedDevices') || {};
+    let pairedDevicesSetting = this.homey.settings.get('pairedDevices') || {};
     this.pairedDevices       = {};
     for (let id in allDevices) {
       let device = allDevices[id];
@@ -96,12 +98,12 @@ module.exports = class HomekitApp extends Homey.App {
     }
 
     // Update settings
-    Homey.ManagerSettings.set('pairedDevices', this.pairedDevices);
+    this.homey.settings.set('pairedDevices', this.pairedDevices);
 
     // Watch for setting changes
-    Homey.ManagerSettings.on('set', debounce(key => {
+    this.homey.settings.on('set', debounce(key => {
       if (key === 'pairedDevices') {
-        this.pairedDevices = Homey.ManagerSettings.get('pairedDevices') || {};
+        this.pairedDevices = this.homey.settings.get('pairedDevices') || {};
       }
     }, 100));
 
@@ -113,11 +115,11 @@ module.exports = class HomekitApp extends Homey.App {
       this.log('New device found!');
       const device =  await api.devices.getDevice({ id });
       this.addDevice(device);
-      Homey.ManagerSettings.set('pairedDevices', this.pairedDevices);
+      this.homey.settings.set('pairedDevices', this.pairedDevices);
     });
 
     // Publish bridge
-    const username = Homey.ManagerSettings.get('username') || 'CC:22:3D:E3:CE:F6';
+    const username = this.homey.settings.get('username') || 'CC:22:3D:E3:CE:F6';
     this.log(`Using ${ username } as username.`);
     try {
       await bridge.publish({
@@ -136,7 +138,7 @@ module.exports = class HomekitApp extends Homey.App {
   // On app init
   async onInit() {
     if (Homey.env.RESET_SETTINGS) {
-      Homey.ManagerSettings.set('pairedDevices', null);
+      this.homey.settings.set('pairedDevices', null);
     }
     try {
       this.api = await this.getApi();
@@ -150,7 +152,7 @@ module.exports = class HomekitApp extends Homey.App {
     // If the app is started less than 10 minuten after a reboot, wait for
     // devices to settle before starting the bridge, otherwise iOS will get
     // confused.
-    const settleTime = Homey.ManagerSettings.get('settleTime') || 120;
+    const settleTime = this.homey.settings.get('settleTime') || 120;
     const uptime     = (await this.api.system.getInfo()).uptime;
     if (uptime < 600) {
       this.log('Homey rebooted, waiting for devices to settle');
@@ -260,7 +262,7 @@ module.exports = class HomekitApp extends Homey.App {
     if (! device || ! bridge) return;
     this.log(`Deleting device '${ device.name }' (${ device.id }) from HomeKit`);
     delete this.pairedDevices[device.id];
-    Homey.ManagerSettings.set('pairedDevices', this.pairedDevices);
+    this.homey.settings.set('pairedDevices', this.pairedDevices);
     let acc = bridge.bridgedAccessories.find(r => r.UUID === device.id);
     acc && bridge.removeBridgedAccessory(acc);
   }
@@ -281,7 +283,7 @@ module.exports = class HomekitApp extends Homey.App {
       return '0123456789ABCDEF'.charAt(Math.floor(Math.random() * 16))
     });
     this.log(`Setting new username to ${ username }`);
-    Homey.ManagerSettings.set('username', username);
-    Homey.ManagerSettings.set('pairedDevices', null);
+    this.homey.settings.set('username', username);
+    this.homey.settings.set('pairedDevices', null);
   }
 }
