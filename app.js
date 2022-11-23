@@ -1,20 +1,18 @@
-// process.env.DEBUG = '*';
-const EventEmitter = require('events');
-EventEmitter.defaultMaxListeners = 100;
-
-const Homey          = require('homey')
-const { HomeyAPI }   = require('athom-api')
-const fs             = require('fs');
-const storage        = require('node-persist');
-const path           = require('path');
-const HAPStorage     = require('hap-nodejs').HAPStorage;
-const uuid           = require('hap-nodejs').uuid;
-const Bridge         = require('hap-nodejs').Bridge;
-const Service        = require('hap-nodejs').Service;
-const Characteristic = require('hap-nodejs').Characteristic;
-const Accessory      = require('hap-nodejs').Accessory;
-const debounce       = require('lodash.debounce');
-const delay          = ms => new Promise(resolve => setTimeout(resolve, ms));
+const Homey        = require('homey')
+const { HomeyAPI } = require('athom-api')
+const fs           = require('fs');
+const storage      = require('node-persist');
+const path         = require('path');
+const debounce     = require('lodash.debounce');
+const {
+  HAPStorage,
+  uuid,
+  Bridge,
+  Service,
+  Characteristic,
+  Accessory
+}           = require('./modules/hap-nodejs');
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // Device classes
 const homekit = require('./lib/');
