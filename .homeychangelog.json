@@ -88,5 +88,8 @@
   },
   "4.3.3": {
     "en": "Added support for obstruction alarm for garagedoor"
+  },
+  "5.0.0": {
+    "en": "SDKv3 support"
   }
 }
