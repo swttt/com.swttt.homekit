@@ -1,6 +1,6 @@
 {
   "id": "com.swttt.homekit",
-  "version": "4.3.3",
+  "version": "5.0.0",
   "brandColor": "#FE9C21",
   "sdk": 3,
   "compatibility": ">=5.0.0",
