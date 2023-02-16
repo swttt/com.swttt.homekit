@@ -1,9 +1,9 @@
-const Homey           = require('homey')
-const { HomeyAPIApp } = require('./modules/homey-api');
-const fs              = require('fs');
-const storage         = require('node-persist');
-const path            = require('path');
-const debounce        = require('lodash.debounce');
+const Homey        = require('homey')
+const { HomeyAPI } = require('./modules/homey-api');
+const fs           = require('fs');
+const storage      = require('node-persist');
+const path         = require('path');
+const debounce     = require('lodash.debounce');
 const {
   HAPStorage,
   uuid,
@@ -42,7 +42,7 @@ module.exports = class HomekitApp extends Homey.App {
   // Get API control function
   async getApi() {
     if (! this.api) {
-      this.api = new HomeyAPIApp({ homey: this.homey });
+      this.api = await HomeyAPI.createAppAPI({ homey: this.homey });
       // have to do this really early to work around a bug in the Web API
       await this.api.devices.connect();
     }
@@ -51,7 +51,18 @@ module.exports = class HomekitApp extends Homey.App {
 
   // Get all devices function
   async getDevices() {
-    return await this.api.devices.getDevices();
+    // HomeyAPIV3 doesn't set zoneName property (unlike V2)
+    // so we'll set it ourselves.
+    const [ zones, devices ] = await Promise.all([
+      this.api.zones.getZones(),
+      this.api.devices.getDevices()
+    ]);
+
+    for (const device of Object.values(devices)) {
+      device.zoneName = zones[device.zone].name;
+    }
+
+    return devices;
   }
 
   // Start server function
@@ -147,6 +158,10 @@ module.exports = class HomekitApp extends Homey.App {
       this.error(e);
       return;
     }
+    this.onInit2();
+  }
+
+  async onInit2() {
     this.pairedDevices = {};
 
     // If the app is started less than 10 minuten after a reboot, wait for
