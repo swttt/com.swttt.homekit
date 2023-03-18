@@ -124,7 +124,7 @@ module.exports = class HomekitApp extends Homey.App {
       if (id in knownDevices) return;
       knownDevices[id] = true;
       this.log('New device found!');
-      const device =  await api.devices.getDevice({ id });
+      const device = await api.devices.getDevice({ id });
       this.addDevice(device);
       this.homey.settings.set('pairedDevices', this.pairedDevices);
     });
